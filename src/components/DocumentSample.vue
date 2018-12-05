@@ -1,0 +1,84 @@
+<i18n>
+  en:
+    message:
+      title: "Mouii: Historical Dictionary"
+      hello: "Hello World"
+      period: "Period"
+      category: "Category"
+      author: "Author"
+      content: "Content"
+      stats: "Statistics"
+  ar:
+    message:
+      title: "المعين: القاموس التاريخي"
+      hello: "السلام عليكم"
+      period: "الفترة الزمنية"
+      category: "النوع"
+      author: "الكاتب"
+      content: "المحتوى"
+      stats: "إحصائيات"
+</i18n>
+
+<template>
+  <v-card>
+    <v-card-title primary-title>
+      <v-avatar>
+        <v-icon>mdi-file-document-box</v-icon>
+      </v-avatar>
+      <h3>{{ doc.name }}</h3>
+    </v-card-title>
+    <v-divider></v-divider>
+    <v-list>
+      <v-list-tile
+        v-for="item in items"
+        :key="item.title"
+        avatar
+      >
+        <v-list-tile-avatar>
+          <v-icon>{{ item.icon }}</v-icon>
+        </v-list-tile-avatar>
+        <v-list-tile-content>
+          <v-list-tile-title> {{ item.value(doc) }}</v-list-tile-title>
+          <!--v-list-tile-sub-title>{{ item.value(doc) }}</v-list-tile-sub-title-->
+        </v-list-tile-content>
+      </v-list-tile>
+    </v-list>
+<!--    <v-divider></v-divider>
+    <v-card-text>
+      {{ doc.sample }}
+    </v-card-text>-->
+
+    <v-card-actions>
+      <v-layout>
+        <v-flex xs6 ma-2>
+          <v-btn router :to="'document/' + doc.id" block> {{ $t('message.content') }}</v-btn>
+        </v-flex>
+        <v-flex xs6 ma-2>
+          <v-btn block> {{ $t('message.stats' ) }} </v-btn>
+        </v-flex>
+      </v-layout>
+    </v-card-actions>
+  </v-card>
+</template>
+
+<script>
+export default {
+  name: 'DocumentSample',
+  props: {
+    doc: Object
+  },
+  data () {
+    return {
+      items: [
+        { title: 'message.period', icon: 'fa fa-clock', value (doc) { return doc['period']['name'] } },
+        { title: 'message.category', icon: 'fa fa-cubes', value (doc) { return doc['category'] } },
+        { title: 'message.author', icon: 'edit', value (doc) { return doc['author'] } }
+      ]
+    }
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
