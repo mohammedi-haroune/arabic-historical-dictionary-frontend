@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
-
 Vue.use(Router)
 
 function route (name) {
@@ -25,6 +24,7 @@ export default new Router({
     route('corpus'),
     route('browser'),
     route('dictionary'),
+    route('dictionary2'),
     { path: '/document/:id', component: resolve => import('./views/Document.vue').then(resolve) },
     // Global redirect for 404
     { path: '*', redirect: '/welcome' }

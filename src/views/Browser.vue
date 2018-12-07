@@ -12,7 +12,7 @@
 </i18n>
 
 <template>
-  <v-layout row wrap>
+  <v-layout justify-center row wrap>
     <v-flex text-xs-center mx-4 xs12>
       <v-select
         v-model="selectedPeriods"
@@ -72,11 +72,11 @@
                     prepend-icon="search"
       ></v-text-field>
     </v-flex>
-    <v-flex xs12 text-xs-center>
+    <v-flex xs10 text-xs-center>
       <v-pagination
         @input="getDocuments"
         v-model="page"
-        :length="20"
+        :length="num_pages"
       ></v-pagination>
     </v-flex>
     <template v-for="doc in documents">
@@ -84,11 +84,11 @@
         <document-sample :key="doc.fileid" :doc="doc"></document-sample>
       </v-flex>
     </template>
-    <v-flex xs12 text-xs-center>
+    <v-flex xs10 text-xs-center>
       <v-pagination
         @input="getDocuments"
         v-model="page"
-        :length="20"
+        :length="num_pages"
       ></v-pagination>
     </v-flex>
   </v-layout>
@@ -106,7 +106,8 @@ export default {
       documents: [],
       selectedPeriods: [],
       selectedCategories: [],
-      page: 1
+      page: 1,
+      num_pages: 0
     }
   },
   mounted () {
@@ -116,7 +117,7 @@ export default {
     async getDocuments () {
       const docs = await $backend.$fetchDocuments(this.selectedPeriods, this.selectedCategories, this.page)
       this.documents = docs.results
-      this.length = Math.round(docs.count / 10)
+      this.num_pages = Math.round(docs.count / 12)
     },
     togglePeriods () {
       this.$nextTick(() => {

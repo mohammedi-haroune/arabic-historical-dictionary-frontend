@@ -28,7 +28,7 @@
       v-model="success_snackbar"
       color="success"
       :timeout="20000"
-      buttom
+      top
       left
     >
       {{ $t('message.example.created') }}
@@ -38,7 +38,7 @@
         color="error"
         :timeout="2000"
         v-model="failure_snackbar"
-        buttom
+        top
         left
       >
         {{ $t('message.example.failure') }}
@@ -206,7 +206,8 @@ export default {
   name: 'NewEntry',
   props: {
     example_to_insert: Object,
-    term_to_insert: String
+    term_to_insert: String,
+    page: Number
   },
   data: () => ({
     valid: true,
@@ -217,7 +218,7 @@ export default {
     examples: [],
     terms: [],
     success_snackbar: false,
-    failure_snackbar: false,
+    failure_snackbar: true,
     term_tag: 'v-autocomplete'
   }),
   computed: {
@@ -296,9 +297,14 @@ export default {
       this.terms = this.example_to_insert.sentence.split(' ')
       this.term_tag = 'v-autocomplete'
     }
+    console.log('received page', this.page)
+    console.log('received term_to_insert', this.term_to_insert)
+
     if (typeof this.term_to_insert !== 'undefined') {
       console.log('received term_to_insert', this.term_to_insert)
+      console.log('received page', this.page)
       this.term = this.term_to_insert
+      this.terms = [this.term_to_insert]
     }
   }
 }

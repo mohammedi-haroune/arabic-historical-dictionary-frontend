@@ -84,7 +84,7 @@
       </v-dialog>-->
     </v-layout>
     <v-layout>
-      <v-dialog v-if="dialog" v-model="dialog">
+      <v-dialog lazy v-model="dialog">
         <v-card>
           <v-toolbar>
             <v-icon>mdi-cursor-text</v-icon>
@@ -94,7 +94,7 @@
               <v-icon color="red">close</v-icon>
             </v-btn>
           </v-toolbar>
-          <new-entry show_meaning="false" :example_to_insert="selected_example()"></new-entry>
+          <new-entry :example_to_insert="selected_example()"></new-entry>
         </v-card>
       </v-dialog>
     </v-layout>

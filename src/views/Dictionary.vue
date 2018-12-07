@@ -62,7 +62,7 @@
         <v-pagination
           @input="fetchEntries"
           v-model="page"
-          :length="20"
+          :length="num_pages"
         ></v-pagination>
       </v-flex>
     </v-card-actions>
@@ -80,7 +80,7 @@
       return {
         id: 2,
         page: 1,
-        length: 1,
+        num_pages: 0,
         title: 'كل الكلمات المتوفرة',
         items: []
       }
@@ -98,7 +98,7 @@
               const set = response.results
               this.items.length = 0
               this.items.push(...set)
-              this.length = Math.round(response.count / 10)
+              this.num_pages = Math.round(response.count / 12)
             })
             .catch(err => console.warn(err))
       },
