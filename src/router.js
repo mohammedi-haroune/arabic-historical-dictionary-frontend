@@ -25,6 +25,7 @@ export default new Router({
     route('browser'),
     route('dictionary'),
     route('dictionary2'),
+    route('graphs'),
     { path: '/document/:id', component: resolve => import('./views/Document.vue').then(resolve) },
     // Global redirect for 404
     { path: '*', redirect: '/welcome' }
