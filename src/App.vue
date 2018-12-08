@@ -114,10 +114,9 @@ export default {
         { icon: 'explore', title: 'Corpus Browser', to: '/browser' },
         { icon: 'edit', title: 'Add Entry', to: '/entry' },
         { icon: 'check', title: 'Corpus Selection', to: '/select' },
-        { icon: 'fa fa-bolt', title: 'Boolean Model', to: '/boolean' },
-        { icon: 'fa fa-poll-h', title: 'Vector Model', to: '/vector' },
         { icon: 'fa fa-book', title: 'Dictionaries', to: '/dictionary' },
         { icon: 'fa fa-book-open', title: 'Dictionaries2', to: '/dictionary2' },
+        { icon: 'fa fa-chart-bar', title: 'Graphs', to: '/graphs' },
         { icon: 'fa fa-info-circle', title: 'About', to: '/about' }
       ],
       clipped: false,
