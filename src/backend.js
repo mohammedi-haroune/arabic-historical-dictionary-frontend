@@ -1,7 +1,8 @@
 import axios from 'axios'
 
 let $backend = axios.create({
-  baseURL: 'http://104.197.159.71/api/',
+  // baseURL: 'http://104.197.159.71/api/',
+  baseURL: process.env.VUE_APP_API_URL,
   timeout: 5000,
   headers: {
     'Content-Type': 'application/json',
