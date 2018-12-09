@@ -1,0 +1,43 @@
+# [START kubernetes_deployment]
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: tal-frontend
+  labels:
+    app: tal-frontend
+spec:
+  template:
+    metadata:
+      labels:
+        app: tal-frontend
+    spec:
+      containers:
+      - name: tal-frontend
+        image: gcr.io/arabic-historical-dictionary/tal-frontend
+        volumeMounts:
+        - name: tal-frontend-dist
+          mountPath: /dist
+        ports:
+        - containerPort: 8080
+
+      volumes:
+      - name: tal-frontend-dist
+        emptyDir: {}
+# [END kubernetes_deployment]
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: tal-frontend
+  labels:
+    app: tal-fronted
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 8080
+  selector:
+    app: tal-fronted
+# [END service]
