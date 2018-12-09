@@ -1,4 +1,4 @@
-FROM node:9.11.1-alpine
+FROM nikolaik/python-nodejs:latest
 
 # install simple http server for serving static content
 RUN npm install -g http-server
