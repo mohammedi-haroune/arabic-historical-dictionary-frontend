@@ -1,4 +1,4 @@
-FROM pyton as preparation-stage
+FROM python as preparation-stage
 RUN pip install kubernetes
 COPY get_api.py get_api.py
 RUN python get_api.py >> .env
