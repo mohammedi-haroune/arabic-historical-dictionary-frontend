@@ -39,4 +39,4 @@ spec:
   selector:
     app: tal-frontend
   type: LoadBalancer
-  loadBalancerIP: "35.208.43.157"
+  loadBalancerIP: "35.195.8.50"
