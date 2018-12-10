@@ -1,12 +1,14 @@
 import axios from 'axios'
 
 let baseUrl = process.env.VUE_APP_API_URL
-console.log(baseUrl)
+let timeout = process.env.VUE_APP_API_CALL_TIMEOUT
+console.log('VUE_APP_API_URL', baseUrl)
+console.log('VUE_APP_API_CALL_TIMEOUT', timeout)
 
 let $backend = axios.create({
   // baseURL: 'http://104.197.159.71/api/',
   baseURL: baseUrl,
-  timeout: 5000,
+  timeout: timeout,
   headers: {
     'Content-Type': 'application/json',
     'X-CSRFTOKEN': document.cookie.split(';')[0].split('=')[1]
