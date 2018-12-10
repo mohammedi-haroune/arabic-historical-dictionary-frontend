@@ -1,13 +1,14 @@
 <template>
-  <h1>Ya el kharay ! akhdem hna</h1>
+  JAAAAAAK ELLL GRAAAAAPH
 </template>
 
 <script>
-export default {
-  name: 'Graphs'
-}
+  import LineChart from '@/components/LineChart'
+  export default {
+    name: 'Graphs',
+    components: {
+      LineChart
+    }
+  }
 </script>
 
-<style scoped>
-
-</style>

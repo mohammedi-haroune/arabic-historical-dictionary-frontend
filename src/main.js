@@ -13,7 +13,7 @@ import i18n from './plugins/vuei18n'
 import './plugins/element_ui'
 
 Vue.config.productionTip = false
-
+/* eslint-disable */
 new Vue({
   router,
   store,
