@@ -1,5 +1,5 @@
 <template>
-  JAAAAAAK ELLL GRAAAAAPH
+  <LineChart></LineChart>
 </template>
 
 <script>
