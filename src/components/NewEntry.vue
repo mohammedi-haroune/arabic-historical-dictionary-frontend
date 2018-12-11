@@ -219,7 +219,7 @@ export default {
     terms: [],
     success_snackbar: false,
     failure_snackbar: true,
-    term_tag: 'v-autocomplete'
+    term_tag: 'v-text-field'
   }),
   computed: {
     inserting_example: function () {
