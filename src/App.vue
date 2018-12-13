@@ -20,13 +20,7 @@
       app
     >
       <v-list>
-        <v-list-tile
-          router
-          :to="item.to"
-          :key="i"
-          v-for="(item, i) in items"
-          exact
-        >
+        <v-list-tile router :to="item.to" :key="i" v-for="(item, i) in items" exact>
           <v-list-tile-action>
             <v-icon v-html="item.icon"></v-icon>
           </v-list-tile-action>
@@ -41,30 +35,18 @@
     </v-toolbar>
     <v-toolbar fixed app :clipped-left="clipped">
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-      <v-btn
-        icon
-        @click.native.stop="miniVariant = !miniVariant"
-      >
+      <v-btn icon @click.native.stop="miniVariant = !miniVariant">
         <v-icon v-html="miniVariant ? 'chevron_right' : 'chevron_left'"></v-icon>
       </v-btn>
-      <v-btn
-        icon
-        @click.native.stop="clipped = !clipped"
-      >
+      <v-btn icon @click.native.stop="clipped = !clipped">
         <v-icon>web</v-icon>
       </v-btn>
-      <v-btn
-        icon
-        @click.native.stop="fixed = !fixed"
-      >
+      <v-btn icon @click.native.stop="fixed = !fixed">
         <v-icon>remove</v-icon>
       </v-btn>
       <v-toolbar-title v-text="$t('message.title')"></v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn
-        icon
-        @click.native.stop="rightDrawer = !rightDrawer"
-      >
+      <v-btn icon @click.native.stop="rightDrawer = !rightDrawer">
         <v-icon>menu</v-icon>
       </v-btn>
     </v-toolbar>
@@ -79,12 +61,7 @@
       </v-container>
     </v-content>
 
-    <v-navigation-drawer
-      temporary
-      :right="!rtl"
-      v-model="rightDrawer"
-      fixed
-    >
+    <v-navigation-drawer temporary :right="!rtl" v-model="rightDrawer" fixed>
       <v-list subheader>
         <v-subheader>Appearance</v-subheader>
         <v-list-tile @click="isDark = !isDark">
@@ -105,19 +82,20 @@
 
 <script>
 export default {
-  data () {
+  data() {
     return {
       items: [
-        { icon: 'apps', title: 'Welcome', to: '/welcome' },
-        { icon: 'create', title: 'Corpus', to: '/corpus' },
-        { icon: 'bubble_chart', title: 'Inspire', to: '/inspire' },
-        { icon: 'explore', title: 'Corpus Browser', to: '/browser' },
-        { icon: 'edit', title: 'Add Entry', to: '/entry' },
-        { icon: 'check', title: 'Corpus Selection', to: '/select' },
-        { icon: 'fa fa-book', title: 'Dictionaries', to: '/dictionary' },
-        { icon: 'fa fa-book-open', title: 'Dictionaries2', to: '/dictionary2' },
-        { icon: 'fa fa-chart-bar', title: 'Graphs', to: '/graphs' },
-        { icon: 'fa fa-info-circle', title: 'About', to: '/about' }
+        { icon: "apps", title: "Welcome", to: "/welcome" },
+        { icon: "create", title: "Corpus", to: "/corpus" },
+        { icon: "bubble_chart", title: "Inspire", to: "/inspire" },
+        { icon: "explore", title: "Corpus Browser", to: "/browser" },
+        { icon: "edit", title: "Add Entry", to: "/entry" },
+        { icon: "check", title: "Corpus Selection", to: "/select" },
+        { icon: "fa fa-book", title: "Dictionaries", to: "/dictionary" },
+        { icon: "fa fa-book-open", title: "Dictionaries2", to: "/dictionary2" },
+        { icon: "fa fa-chart-bar", title: "Graphs", to: "/graphs" },
+        { icon: "fa fa-info-circle", title: "About", to: "/about" },
+        { icon: "fa fa-info-circle", title: "Dashboard", to: "/dashboard" }
       ],
       clipped: false,
       drawer: true,
@@ -126,28 +104,28 @@ export default {
       rightDrawer: false,
       isDark: false,
       locale: this.$i18n.locale
-    }
+    };
   },
   watch: {
-    '$i18n.locale' (val) {
-      this.$vuetify.rtl = val === 'ar'
-      this.$vuetify.lang = val
+    "$i18n.locale"(val) {
+      this.$vuetify.rtl = val === "ar";
+      this.$vuetify.lang = val;
     },
-    '$veutify.lang' (val) {
-      this.$i18n.locale = val
-      this.$vuetify.rtl = val === 'ar'
+    "$veutify.lang"(val) {
+      this.$i18n.locale = val;
+      this.$vuetify.rtl = val === "ar";
     }
   },
   computed: {
-    rtl () {
-      return this.$vuetify.rtl
+    rtl() {
+      return this.$vuetify.rtl;
     }
   },
-  mounted () {
-    this.$store.dispatch('getPeriods')
-    this.$store.dispatch('getCategories')
-    this.$store.dispatch('getPostags')
-    this.$store.dispatch('getDicts')
+  mounted() {
+    this.$store.dispatch("getPeriods");
+    this.$store.dispatch("getCategories");
+    this.$store.dispatch("getPostags");
+    this.$store.dispatch("getDicts");
   }
-}
+};
 </script>
