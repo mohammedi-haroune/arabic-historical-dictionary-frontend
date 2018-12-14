@@ -30,6 +30,7 @@
         multiple
       >
         <v-list-tile
+          v-if="periods.length > 0"
           slot="prepend-item"
           ripple
           @click="togglePeriods"
@@ -56,6 +57,7 @@
         multiple
       >
         <v-list-tile
+          v-if="categories.length > 0"
           slot="prepend-item"
           ripple
           @click="toggleCategories"
@@ -74,18 +76,29 @@
     </v-flex>
     <v-flex xs10 text-xs-center>
       <v-pagination
+        v-if="num_pages !== 0"
         @input="getDocuments"
         v-model="page"
         :length="num_pages"
       ></v-pagination>
     </v-flex>
-    <template v-for="doc in documents">
+    <v-flex pa-5 ma-5 xs10 text-xs-center v-if="loading">
+      <v-progress-circular
+        :size="70"
+        :width="7"
+        color="primary"
+        indeterminate
+      ></v-progress-circular>
+    </v-flex>
+
+    <template v-else v-for="doc in documents">
       <v-flex :key="doc.fileid" pa-2 md4>
         <document-sample :key="doc.fileid" :doc="doc"></document-sample>
       </v-flex>
     </template>
     <v-flex xs10 text-xs-center>
       <v-pagination
+        v-if="num_pages !== 0"
         @input="getDocuments"
         v-model="page"
         :length="num_pages"
@@ -107,6 +120,7 @@ export default {
       selectedPeriods: [],
       selectedCategories: [],
       page: 1,
+      loading: false,
       num_pages: 0
     }
   },
@@ -115,9 +129,11 @@ export default {
   },
   methods: {
     async getDocuments () {
+      this.loading = true
       const docs = await $backend.$fetchDocuments(this.selectedPeriods, this.selectedCategories, this.page)
       this.documents = docs.results
       this.num_pages = Math.round(docs.count / 12)
+      this.loading = false
     },
     togglePeriods () {
       this.$nextTick(() => {
