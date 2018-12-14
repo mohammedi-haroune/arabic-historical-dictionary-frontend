@@ -7,13 +7,19 @@
     message:
       title: "المعين: القاموس التاريخي"
       hello: "السلام عليكم"
+      welcome: "السلام عليكم"
+      corpus: "أضف الملفات"
+      browser: "تصفح الملفات"
+      add_entry: "أضف مصلح"
+      dict: "القاموس"
+      hist_dict: "القاموس التاريخي"
+      about: "من نحن ؟"
 </i18n>
 
 <template>
   <v-app :dark="isDark">
     <v-navigation-drawer
       :mini-variant="miniVariant"
-      :clipped="clipped"
       v-model="drawer"
       :right="rtl"
       fixed
@@ -39,25 +45,13 @@
     <v-toolbar fixed>
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
     </v-toolbar>
-    <v-toolbar fixed app :clipped-left="clipped">
+    <v-toolbar  fixed app>
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
       <v-btn
         icon
         @click.native.stop="miniVariant = !miniVariant"
       >
-        <v-icon v-html="miniVariant ? 'chevron_right' : 'chevron_left'"></v-icon>
-      </v-btn>
-      <v-btn
-        icon
-        @click.native.stop="clipped = !clipped"
-      >
-        <v-icon>web</v-icon>
-      </v-btn>
-      <v-btn
-        icon
-        @click.native.stop="fixed = !fixed"
-      >
-        <v-icon>remove</v-icon>
+        <v-icon v-html="chevron"></v-icon>
       </v-btn>
       <v-toolbar-title v-text="$t('message.title')"></v-toolbar-title>
       <v-spacer></v-spacer>
@@ -72,9 +66,7 @@
     <v-content>
       <v-container fluid>
         <v-slide-y-transition mode="out-in">
-          <keep-alive>
             <router-view></router-view>
-          </keep-alive>
         </v-slide-y-transition>
       </v-container>
     </v-content>
@@ -108,16 +100,14 @@ export default {
   data () {
     return {
       items: [
-        { icon: 'apps', title: 'Welcome', to: '/welcome' },
-        { icon: 'create', title: 'Corpus', to: '/corpus' },
-        { icon: 'explore', title: 'Corpus Browser', to: '/browser' },
-        { icon: 'edit', title: 'Add Entry', to: '/entry' },
-        { icon: 'check', title: 'Corpus Selection', to: '/select' },
-        { icon: 'fa fa-book', title: 'Dictionaries', to: '/dictionary' },
-        { icon: 'fa fa-book-open', title: 'Dictionaries2', to: '/dictionary2' },
-        { icon: 'fa fa-info-circle', title: 'About', to: '/about' }
+        { icon: 'apps', title: this.$t('message.welcome'), to: '/welcome' },
+        { icon: 'create', title: this.$t('message.corpus'), to: '/corpus' },
+        { icon: 'explore', title: this.$t('message.browser'), to: '/browser' },
+        { icon: 'edit', title: this.$t('message.add_entry'), to: '/entry' },
+        { icon: 'fa fa-book', title: this.$t('message.dict'), to: '/dictionary' },
+        { icon: 'fa fa-book-open', title: this.$t('message.hist_dict'), to: '/dictionary2' },
+        { icon: 'fa fa-info-circle', title: this.$t('message.about'), to: '/about' }
       ],
-      clipped: false,
       drawer: true,
       fixed: false,
       miniVariant: false,
@@ -137,6 +127,15 @@ export default {
     }
   },
   computed: {
+    chevron () {
+      if (this.miniVariant) {
+        if (this.rtl) return 'chevron_left'
+        else return 'chevron_right'
+      } else {
+        if (this.rtl) return 'chevron_right'
+        else return 'chevron_left'
+      }
+    },
     rtl () {
       return this.$vuetify.rtl
     }
