@@ -77,6 +77,7 @@
     <v-flex xs10 text-xs-center>
       <v-pagination
         v-if="num_pages !== 0"
+        total-visible="15"
         @input="getDocuments"
         v-model="page"
         :length="num_pages"
@@ -99,6 +100,7 @@
     <v-flex xs10 text-xs-center>
       <v-pagination
         v-if="num_pages !== 0"
+        total-visible="15"
         @input="getDocuments"
         v-model="page"
         :length="num_pages"
