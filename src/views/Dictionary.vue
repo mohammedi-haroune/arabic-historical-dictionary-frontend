@@ -9,7 +9,16 @@
       justify-space-between
       pa-3
     >
-      <v-flex xs12>
+      <v-flex pa-5 ma-5 xs10 text-xs-center v-if="loading">
+        <v-progress-circular
+          :size="70"
+          :width="7"
+          color="primary"
+          indeterminate
+        ></v-progress-circular>
+      </v-flex>
+
+      <v-flex v-else xs12>
         <v-list expand>
           <v-list-group
             v-for="item in items"
@@ -60,6 +69,8 @@
     <v-card-actions>
       <v-flex text-xs-center>
         <v-pagination
+          v-if="num_pages > 0"
+          total-visible="15"
           @input="fetchEntries"
           v-model="page"
           :length="num_pages"
@@ -82,7 +93,8 @@
         page: 1,
         num_pages: 0,
         title: 'كل الكلمات المتوفرة',
-        items: []
+        items: [],
+        loading: false
       }
     },
     mounted () {
@@ -93,12 +105,14 @@
         // Remove in 6 months and say
         // you've made optimizations! :)
         // await pause(1500)
+        this.loading = true
         return $backend.$getEntrySet(this.page)
             .then(response => {
               const set = response.results
               this.items.length = 0
               this.items.push(...set)
               this.num_pages = Math.round(response.count / 12)
+              this.loading = false
             })
             .catch(err => console.warn(err))
       },
