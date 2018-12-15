@@ -17,6 +17,7 @@
       author: "الكاتب"
       content: "المحتوى"
       stats: "إحصائيات"
+      more: "اقرأ المزيد"
       example:
         add: "إضافة مثال تاريخي"
 </i18n>
@@ -76,16 +77,10 @@
           </v-btn>
         </v-speed-dial>
       </transition>
-
-<!--      <v-dialog v-model="dialog">
-        <v-card>
-          <h1>Tahar</h1>
-        </v-card>
-      </v-dialog>-->
     </v-layout>
     <v-layout>
-      <v-dialog lazy v-model="dialog">
-        <v-card>
+      <v-dialog lazy v-model="dialog" v-if="dialog">
+        <v-card v-scroll="scrolling">
           <v-toolbar>
             <v-icon>mdi-cursor-text</v-icon>
             <v-toolbar-title>{{ $t('message.example.add') }}</v-toolbar-title>
@@ -94,12 +89,20 @@
               <v-icon color="red">close</v-icon>
             </v-btn>
           </v-toolbar>
-          <new-entry :example_to_insert="selected_example()"></new-entry>
+          <new-entry :example_to_insert="selected_example"></new-entry>
         </v-card>
       </v-dialog>
     </v-layout>
     <v-layout>
-      <v-card v-if="this.doc !== null">
+      <v-flex v-if="loading" pa-5 ma-5 xs10 text-xs-center>
+        <v-progress-circular
+          :size="70"
+          :width="7"
+          color="primary"
+          indeterminate
+        ></v-progress-circular>
+      </v-flex>
+      <v-card v-else>
         <v-layout wrap align-center justify-space-around row>
             <v-flex
               v-for="item in items"
@@ -119,6 +122,21 @@
           <p :key="i" :id="i" v-for="(sent, i) in sents">
             {{ sent.join(' ') }}
           </p>
+          <v-flex v-if="loading_sents" ma-5 xs10 text-xs-center>
+            <v-progress-circular
+              :size="50"
+              :width="5"
+              color="primary"
+              indeterminate
+            ></v-progress-circular>
+          </v-flex>
+          <v-flex
+            v-else-if="this.pages > this.loaded_pages"
+            xs-text-center
+            xs10
+          >
+            <v-btn @click="fetchSentences"> {{ $t('message.more') }}</v-btn>
+          </v-flex>
         </v-card-text>
       </v-card>
     </v-layout>
@@ -140,7 +158,11 @@ export default {
       fab: false,
       selected: '',
       dialog: false,
-      success_snackbar: false
+      loading: false,
+      loading_sents: false,
+      pages: 0,
+      loaded_pages: 0,
+      limit_initial_pages: 5
     }
   },
   computed: {
@@ -151,22 +173,8 @@ export default {
         { title: 'message.category', icon: 'fa fa-cubes', value: this.doc.category },
         { title: 'message.author', icon: 'edit', value: this.doc.author }
       ]
-    }
-  },
-  created () {
-    this.getDocument()
-  },
-  methods: {
-    async getDocument () {
-      this.doc = await $backend.$getDocument(this.id)
-      const res = await $backend.$getSentences(this.id)
-      this.sents = res.results
     },
-    log () {
-      console.log('adding example', this.selected_example())
-      this.dialog = !this.dialog
-    },
-    selected_example () {
+    selected_example: function () {
       return {
         documents: [this.doc],
         document_id: this.doc.id,
@@ -177,6 +185,37 @@ export default {
         categories: [this.doc.category],
         category: this.doc.category,
         confirmed: false
+      }
+    }
+  },
+  created () {
+    this.getDocument()
+  },
+  methods: {
+    async getDocument () {
+      this.loading = true
+      this.doc = await $backend.$getDocument(this.id)
+      this.loading = false
+      while (this.loaded_pages <= this.limit_initial_pages) {
+        this.fetchSentences()
+      }
+    },
+    async fetchSentences () {
+      this.loading_sents = true
+      this.loaded_pages = this.loaded_pages + 1
+      const res = await $backend.$getSentences(this.id, this.loaded_pages)
+      this.pages = res.count / 12
+      this.sents = this.sents.concat(res.results)
+      this.loading_sents = false
+    },
+    log () {
+      console.log('adding example', this.selected_example)
+      this.dialog = !this.dialog
+    },
+    scrolling (e) {
+      console.log(e.target.scrollTop)
+      if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+        this.fetchSentences()
       }
     }
   },
@@ -192,7 +231,6 @@ export default {
       }
       self.selected = text.trim()
       if (self.selected === '') {
-        console.log('empty ya chkoukou !')
         this.fab = false
       }
       console.log('selected', self.selected)
