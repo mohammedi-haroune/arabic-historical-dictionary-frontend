@@ -42,7 +42,7 @@ $backend.$getDicts = () => $backend.get('dictionaries/', { params: { entry_set: 
 $backend.$getPostags = () => $backend.get('postags/')
 
 $backend.$getDocument = (id) => $backend.get('documents/' + id, { params: { raw: true } })
-$backend.$getSentences = (id) => $backend.get('sentences/', { params: { id } })
+$backend.$getSentences = (id, page = 1) => $backend.get('sentences/', { params: { id, page } })
 
 $backend.$createEntry = (term, meanings, examples) =>
   $backend.post('entries/', {
