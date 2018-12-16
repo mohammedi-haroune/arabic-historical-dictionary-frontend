@@ -9,6 +9,8 @@
       periods: "الفترات الزمنية"
       categories: "الاقسام"
       search: "البحث"
+      not_found: "لم يتم العثور على نتائج"
+
 </i18n>
 
 <template>
@@ -70,7 +72,7 @@
       </v-select>
     </v-flex>
     <v-flex mx-4 xs12>
-      <v-text-field solo :label="$t('message.search')" @input="getDocuments"
+      <v-text-field v-model="query" solo :label="$t('message.search')" @input="getDocuments"
                     prepend-icon="search"
       ></v-text-field>
     </v-flex>
@@ -92,11 +94,20 @@
       ></v-progress-circular>
     </v-flex>
 
-    <template v-else v-for="doc in documents">
+    <template v-else-if="documents.length > 0" v-for="doc in documents">
       <v-flex :key="doc.fileid" pa-2 md4>
         <document-sample :key="doc.fileid" :doc="doc"></document-sample>
       </v-flex>
     </template>
+
+    <v-flex v-else ma-4 xs12>
+        <v-alert
+          :value="true"
+          type="warning"
+        >
+          {{ $t('message.not_found') }}
+        </v-alert>
+    </v-flex>
     <v-flex xs10 text-xs-center>
       <v-pagination
         v-if="num_pages !== 0"
@@ -121,6 +132,7 @@ export default {
       documents: [],
       selectedPeriods: [],
       selectedCategories: [],
+      query: '',
       page: 1,
       loading: false,
       num_pages: 0
@@ -132,7 +144,7 @@ export default {
   methods: {
     async getDocuments () {
       this.loading = true
-      const docs = await $backend.$fetchDocuments(this.selectedPeriods, this.selectedCategories, this.page)
+      const docs = await $backend.$fetchDocuments(this.selectedPeriods, this.selectedCategories, this.query, this.page)
       this.documents = docs.results
       this.num_pages = Math.round(docs.count / 12)
       this.loading = false
