@@ -2,6 +2,7 @@
   ar:
     message:
       search: "البحث"
+      not_found: "لم يتم العثور على نتائج"
 </i18n>
 <template>
   <v-layout row wrap>
@@ -28,7 +29,7 @@
           ></v-progress-circular>
         </v-flex>
 
-        <v-flex v-else xs12>
+        <v-flex v-else-if="items.length > 0" xs12>
           <v-list expand>
             <v-list-group
               v-for="item in items"
@@ -73,6 +74,14 @@
             >mdi-account
             </v-icon>
           </v-treeview>-->
+        </v-flex>
+        <v-flex v-else xs12>
+          <v-alert
+            :value="true"
+            type="warning"
+          >
+            {{ $t('message.not_found') }}
+          </v-alert>
         </v-flex>
       </v-layout>
       <v-card-actions>
