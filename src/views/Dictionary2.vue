@@ -4,6 +4,7 @@
       periods: "الفترات الزمنية"
       categories: "الاقسام"
       search: "البحث"
+      not_found: "لم يتم العثور على نتائج"
       term:
         add: "إضافة مصطلح تاريخي"
         history: "تاريخ المعنى"
@@ -104,7 +105,7 @@
         </v-select>
       </v-flex>
       <v-flex mx-4 xs12>
-        <v-text-field solo :label="$t('message.search')" @input="fetchEntries()"
+        <v-text-field v-model="query" solo :label="$t('message.search')" @input="fetchEntries()"
                       prepend-icon="search"
         ></v-text-field>
       </v-flex>
@@ -130,7 +131,7 @@
         ></v-progress-circular>
       </v-flex>
     </v-layout>
-    <v-layout v-else>
+    <v-layout v-else-if="items.length > 0">
       <v-flex xs12>
         <ol>
           <li
@@ -158,6 +159,16 @@
         </ol>
       </v-flex>
     </v-layout>
+    <v-layout v-else>
+      <v-flex xs12>
+        <v-alert
+          :value="true"
+          type="warning"
+        >
+          {{ $t('message.not_found') }}
+        </v-alert>
+      </v-flex>
+    </v-layout>
   </v-container>
 </template>
 
@@ -173,7 +184,8 @@ export default {
   data () {
     return {
       id: 2,
-      page: 2,
+      page: 1,
+      query: '',
       num_pages: 0,
       title: 'كل الكلمات المتوفرة',
       items: [],
@@ -193,7 +205,7 @@ export default {
   methods: {
     async fetchEntries () {
       this.loading = true
-      return $backend.$getEntrySet(this.page)
+      return $backend.$getEntrySet(this.query, this.page)
         .then(response => {
           const set = response.results
           this.items.length = 0
@@ -266,6 +278,11 @@ export default {
       return 'mdi-checkbox-blank-outline'
     },
     ...mapState(['periods', 'categories'])
+  },
+  watch: {
+    query (val) {
+      this.page = 1
+    }
   }
 }
 </script>
