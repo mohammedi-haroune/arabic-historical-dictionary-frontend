@@ -77,6 +77,7 @@
         row>
         <v-flex xs10 md5 pa-2>
           <v-autocomplete
+            :disabled="inserting_meaning"
             v-model="meaning.posTag"
             :label="$t('message.meaning.posTag')"
             :items="postags"
@@ -87,6 +88,7 @@
         </v-flex>
         <v-flex  xs10 md5 pa-2>
           <v-text-field
+            :disabled="inserting_meaning"
             v-model="meaning.text"
             :label="$t('message.meaning.text')"
             :rules="requiredRules"
@@ -94,12 +96,12 @@
           >
           </v-text-field>
         </v-flex>
-        <v-flex pa-2>
+        <v-flex pa-2 v-if="!inserting_meaning">
           <v-btn icon>
             <v-icon meduim @click="deleteMeaning(index)">delete</v-icon>
           </v-btn>
         </v-flex>
-        <v-flex pa-2>
+        <v-flex pa-2 v-if="!inserting_meaning">
           <v-btn icon v-show="index === meanings.length - 1">
             <v-icon meduim @click="addMeaning">add</v-icon>
           </v-btn>
@@ -207,6 +209,7 @@ export default {
   props: {
     example_to_insert: Object,
     term_to_insert: String,
+    meaning_to_insert: Object,
     page: Number
   },
   data: () => ({
@@ -218,7 +221,7 @@ export default {
     examples: [],
     terms: [],
     success_snackbar: false,
-    failure_snackbar: true,
+    failure_snackbar: false,
     term_tag: 'v-text-field'
   }),
   computed: {
@@ -227,6 +230,9 @@ export default {
     },
     inserting_term: function () {
       return typeof this.term_to_insert !== 'undefined'
+    },
+    inserting_meaning: function () {
+      return typeof this.meaning_to_insert !== 'undefined'
     },
     ...mapState(['postags', 'dictionaries', 'periods', 'categories'])
   },
@@ -291,20 +297,20 @@ export default {
   },
   mounted () {
     console.log('mounted !')
-    if (this.example_to_insert !== undefined) {
+    if (this.inserting_example) {
       console.log('received example_to_insert: ', this.example_to_insert)
       this.examples.push(this.example_to_insert)
       this.terms = this.example_to_insert.sentence.split(' ')
       this.term_tag = 'v-autocomplete'
     }
-    console.log('received page', this.page)
-    console.log('received term_to_insert', this.term_to_insert)
-
-    if (typeof this.term_to_insert !== 'undefined') {
+    if (this.inserting_term) {
       console.log('received term_to_insert', this.term_to_insert)
-      console.log('received page', this.page)
       this.term = this.term_to_insert
-      this.terms = [this.term_to_insert]
+    }
+    if (this.inserting_meaning) {
+      console.log('received meaning_to_insert', this.meaning_to_insert)
+      this.meanings = [ this.meaning_to_insert ]
+      this.meaning = this.meaning_to_insert
     }
   }
 }
