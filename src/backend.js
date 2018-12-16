@@ -26,12 +26,12 @@ $backend.interceptors.response.use(
     return Promise.reject(error)
   })
 
-$backend.$fetchDocuments = (periods, categories, page) =>
-  $backend.get('documents/', { params: { periods, categories, page } })
+$backend.$fetchDocuments = (periods, categories, query, page) =>
+  $backend.get('documents/', { params: { periods, categories, query, page } })
 
 $backend.$getDictionary = (id) => $backend.get('dictionaries/' + id)
 
-$backend.$getEntrySet = (page) => $backend.get('entries/', { params: { page } })
+$backend.$getEntrySet = (query, page) => $backend.get('entries/', { params: { query, page } })
 
 $backend.$getPeriods = () => $backend.get('periods/')
 
