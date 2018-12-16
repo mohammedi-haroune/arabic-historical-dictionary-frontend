@@ -1,6 +1,9 @@
 <i18n>
   ar:
     message:
+      periods: "الفترات الزمنية"
+      categories: "الاقسام"
+      search: "البحث"
       term:
         add: "إضافة مصطلح تاريخي"
         history: "تاريخ المعنى"
@@ -41,6 +44,70 @@
           </v-card-text>
         </v-card>
       </v-dialog>
+    </v-layout>
+    <v-layout justify-center row wrap>
+      <v-flex text-xs-center mx-4 xs12>
+        <v-select
+          v-model="selectedPeriods"
+          :items="periods"
+          item-value="id"
+          item-text="name"
+          prepend-icon="fa fa-clock"
+          chips
+          cache-items
+          clearable
+          dense
+          solo
+          :label="$t('message.periods')"
+          @change="fetchEntries()"
+          multiple
+        >
+          <v-list-tile
+            v-if="periods.length > 0"
+            slot="prepend-item"
+            ripple
+            @click="togglePeriods"
+          >
+            <v-list-tile-action>
+              <v-icon :color="selectedPeriods.length > 0 ? 'indigo darken-4' : ''">{{ iconPeriods }}</v-icon>
+            </v-list-tile-action>
+            <v-list-tile-title> Select All</v-list-tile-title>
+          </v-list-tile>
+        </v-select>
+      </v-flex>
+
+      <v-flex text-xs-center mx-4 xs12>
+        <v-select
+          v-model="selectedCategories"
+          :items="categories"
+          chips
+          cache-items
+          clearable
+          dense
+          solo
+          prepend-icon="fa fa-cubes"
+          :label="$t('message.categories')"
+          @change="fetchEntries()"
+          multiple
+        >
+          <v-list-tile
+            v-if="categories.length > 0"
+            slot="prepend-item"
+            ripple
+            @click="toggleCategories"
+          >
+            <v-list-tile-action>
+              <v-icon :color="selectedCategories.length > 0 ? 'indigo darken-4' : ''">{{ iconCategories }}</v-icon>
+            </v-list-tile-action>
+            <v-list-tile-title> Select All</v-list-tile-title>
+          </v-list-tile>
+        </v-select>
+      </v-flex>
+      <v-flex mx-4 xs12>
+        <v-text-field solo :label="$t('message.search')" @input="fetchEntries()"
+                      prepend-icon="search"
+        ></v-text-field>
+      </v-flex>
     </v-layout>
     <v-layout>
     <v-flex text-xs-center>
@@ -98,6 +165,7 @@
 import $backend from '../backend'
 import NewEntry from '../components/NewEntry'
 import History from '../components/History'
+import { mapState } from 'vuex'
 
 export default {
   name: 'Dictionary2',
@@ -113,6 +181,8 @@ export default {
       selected_term: '',
       selected_meaning: '',
       dialog_history: false,
+      selectedPeriods: [],
+      selectedCategories: [],
       clicked: false,
       loading: false
     }
@@ -150,7 +220,52 @@ export default {
       this.selected_meaning = meaning
       console.log('selected_meaning', this.selected_meaning)
       this.dialog_history = true
+    },
+    togglePeriods () {
+      this.$nextTick(() => {
+        if (this.likesAllPeriods) {
+          this.selectedPeriods = []
+        } else {
+          this.selectedPeriods = this.periods.map(p => p.id).slice()
+        }
+        this.fetchEntries()
+      })
+    },
+    toggleCategories () {
+      this.$nextTick(() => {
+        if (this.likesAllCategories) {
+          this.selectedCategories = []
+        } else {
+          this.selectedCategories = this.categories.slice()
+        }
+        this.fetchEntries()
+      })
     }
+  },
+  computed: {
+    likesAllPeriods () {
+      return this.selectedPeriods.length === this.periods.length
+    },
+    likesSomePeriods () {
+      return this.selectedPeriods.length > 0 && !this.likesAllPeriods
+    },
+    iconPeriods () {
+      if (this.likesAllPeriods) return 'mdi-close-box'
+      if (this.likesSomePeriods) return 'mdi-minus-box'
+      return 'mdi-checkbox-blank-outline'
+    },
+    likesAllCategories () {
+      return this.selectedCategories.length === this.categories.length
+    },
+    likesSomeCategories () {
+      return this.selectedCategories.length > 0 && !this.likesAllCategories
+    },
+    iconCategories () {
+      if (this.likesAllCategories) return 'mdi-close-box'
+      if (this.likesSomeCategories) return 'mdi-minus-box'
+      return 'mdi-checkbox-blank-outline'
+    },
+    ...mapState(['periods', 'categories'])
   }
 }
 </script>
