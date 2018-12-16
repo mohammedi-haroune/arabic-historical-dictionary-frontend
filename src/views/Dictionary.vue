@@ -6,7 +6,7 @@
 <template>
   <v-layout row wrap>
     <v-flex xs12 mx-4>
-      <v-text-field solo :label="$t('message.search')" @input="fetchEntries"
+      <v-text-field v-model="query" solo :label="$t('message.search')" @input="fetchEntries"
                     prepend-icon="search"
       ></v-text-field>
     </v-flex>
@@ -45,7 +45,6 @@
               <v-list-tile
                 v-for="meaning in item.meaning_set"
                 :key="meaning.id"
-                @click=""
               >
                 <v-list-tile-content>
                   <v-list-tile-title>{{ meaning.text }}</v-list-tile-title>
@@ -93,47 +92,53 @@
 </template>
 
 <script>
-  const pause = ms => new Promise(resolve => setTimeout(resolve, ms))
+import $backend from '../backend'
 
-  import $backend from '../backend'
+const pause = ms => new Promise(resolve => setTimeout(resolve, ms))
 
-  export default {
-    name: 'Dictionary',
-    data () {
-      return {
-        id: 2,
-        page: 1,
-        num_pages: 0,
-        title: 'كل الكلمات المتوفرة',
-        items: [],
-        loading: false
-      }
+export default {
+  name: 'Dictionary',
+  data () {
+    return {
+      id: 2,
+      page: 1,
+      query: '',
+      num_pages: 0,
+      title: 'كل الكلمات المتوفرة',
+      items: [],
+      loading: false
+    }
+  },
+  mounted () {
+    this.fetchEntries()
+  },
+  methods: {
+    async fetchEntries () {
+      // Remove in 6 months and say
+      // you've made optimizations! :)
+      // await pause(1500)
+      this.loading = true
+      return $backend.$getEntrySet(this.query, this.page)
+        .then(response => {
+          const set = response.results
+          this.items.length = 0
+          this.items.push(...set)
+          this.num_pages = Math.round(response.count / 12)
+          this.loading = false
+        })
+        .catch(err => console.warn(err))
     },
-    mounted () {
-      this.fetchEntries()
-    },
-    methods: {
-      async fetchEntries () {
-        // Remove in 6 months and say
-        // you've made optimizations! :)
-        // await pause(1500)
-        this.loading = true
-        return $backend.$getEntrySet(this.page)
-            .then(response => {
-              const set = response.results
-              this.items.length = 0
-              this.items.push(...set)
-              this.num_pages = Math.round(response.count / 12)
-              this.loading = false
-            })
-            .catch(err => console.warn(err))
-      },
-      async getMeaning (id) {
-        const meaning = await $backend.$getMeaning(id)
-        return meaning
-      }
+    async getMeaning (id) {
+      const meaning = await $backend.$getMeaning(id)
+      return meaning
+    }
+  },
+  watch: {
+    query (val) {
+      this.page = 1
     }
   }
+}
 </script>
 
 <style scoped>
