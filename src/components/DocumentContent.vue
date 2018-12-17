@@ -62,6 +62,7 @@
             fab
             dark
             small
+            @click="log"
             color="indigo"
           >
             <v-icon>add</v-icon>
@@ -70,10 +71,9 @@
             fab
             dark
             small
-            @click="log"
             color="red"
           >
-            <v-icon>delete</v-icon>
+            <v-icon>search</v-icon>
           </v-btn>
         </v-speed-dial>
       </transition>
