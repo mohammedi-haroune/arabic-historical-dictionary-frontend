@@ -13,7 +13,7 @@
   <v-container>
     <v-layout>
       <!-- lazy here is required because otherwise selected_meaning and selected_term will be empty -->
-      <v-dialog lazy v-model="dialog_add">
+      <v-dialog v-if="dialog_add" lazy v-model="dialog_add">
         <v-card>
           <v-toolbar>
             <v-icon>mdi-cursor-text</v-icon>
@@ -26,7 +26,7 @@
           <new-entry :page="page" :term_to_insert="selected_term" :meaning_to_insert="selected_meaning"></new-entry>
         </v-card>
       </v-dialog>
-      <v-dialog lazy v-model="dialog_history">
+      <v-dialog v-if="dialog_history" lazy v-model="dialog_history">
         <v-card>
           <v-toolbar>
             <v-icon>mdi-cursor-text</v-icon>
@@ -39,7 +39,7 @@
           <v-card-text>
             <v-layout>
               <v-flex>
-                <history></history>
+                <history :meaning_id="selected_meaning_id"></history>
               </v-flex>
             </v-layout>
           </v-card-text>
@@ -149,7 +149,7 @@
                   <v-btn icon @click="add(item.term, meaning)">
                     <v-icon>add</v-icon>
                   </v-btn>
-                  <v-btn icon @click="history(meaning)">
+                  <v-btn v-if="meaning.is_appears" icon @click="history(meaning.id)">
                     <v-icon>fa fa-info</v-icon>
                   </v-btn>
                 </li>
@@ -192,6 +192,7 @@ export default {
       dialog_add: false,
       selected_term: '',
       selected_meaning: '',
+      selected_meaning_id: '',
       dialog_history: false,
       selectedPeriods: [],
       selectedCategories: [],
@@ -227,10 +228,9 @@ export default {
       console.log('selected_meaning', this.selected_meaning)
       this.dialog_add = true
     },
-    history (meaning) {
-      console.log('meaning', meaning)
-      this.selected_meaning = meaning
-      console.log('selected_meaning', this.selected_meaning)
+    history (id) {
+      console.log('meaning_id', id)
+      this.selected_meaning_id = id
       this.dialog_history = true
     },
     togglePeriods () {
