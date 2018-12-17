@@ -44,6 +44,8 @@ $backend.$getPostags = () => $backend.get('postags/')
 $backend.$getDocument = (id) => $backend.get('documents/' + id, { params: { raw: true } })
 $backend.$getSentences = (id, page = 1) => $backend.get('sentences/', { params: { id, page } })
 
+$backend.$fetchAppears = (id) => $backend.get('meaning_appears/' + id)
+
 $backend.$createEntry = (term, meanings, examples) =>
   $backend.post('entries/', {
     term: term,
