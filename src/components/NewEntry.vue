@@ -286,7 +286,7 @@ export default {
       if (example['period']) periods.push(example['period'])
       const categories = []
       if (example['category']) categories.push(example['category'])
-      const docs = await $backend.$fetchDocuments(periods, categories, 1)
+      const docs = await $backend.$fetchDocuments(periods, categories, '')
       example['documents'] = docs.results
     },
     async getSentences (index) {
