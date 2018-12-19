@@ -6,10 +6,10 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    periods: Array,
-    categories: Array,
-    postags: Array,
-    dictionaries: Array
+    periods: [],
+    categories: [],
+    postags: [],
+    dictionaries: []
   },
   mutations: {
     setPeriods (state, periods) {
