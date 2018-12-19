@@ -45,13 +45,13 @@ $backend.$getDocument = (id) => $backend.get('documents/' + id, { params: { raw:
 $backend.$getSentences = (id, page = 1) => $backend.get('sentences/', { params: { id, page } })
 
 $backend.$fetchAppears = (id) => $backend.get('meaning_appears/' + id)
+$backend.$fetchWordAppears = (params) => $backend.get('meaning_appears/', { params })
 
-$backend.$createEntry = (term, meanings, examples) =>
+$backend.$createEntry = (term, meanings) =>
   $backend.post('entries/', {
     term: term,
     dictionary: 1,
-    meaning_set: meanings,
-    appears_set: examples
+    meaning_set: meanings
   })
 
 export default $backend

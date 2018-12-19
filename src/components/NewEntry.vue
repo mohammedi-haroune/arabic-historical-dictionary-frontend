@@ -96,7 +96,7 @@
           >
           </v-text-field>
         </v-flex>
-        <v-flex pa-2 v-if="!inserting_meaning">
+        <!-- <v-flex pa-2 v-if="!inserting_meaning">
           <v-btn icon>
             <v-icon meduim @click="deleteMeaning(index)">delete</v-icon>
           </v-btn>
@@ -105,7 +105,7 @@
           <v-btn icon v-show="index === meanings.length - 1">
             <v-icon meduim @click="addMeaning">add</v-icon>
           </v-btn>
-        </v-flex>
+        </v-flex> -->
       </v-layout>
     </v-container>
     <v-container wrap>
@@ -151,7 +151,7 @@
           <v-flex xs10 md4 pa-2>
             <v-autocomplete
               :disabled="inserting_example"
-              v-model="example.document_id"
+              v-model="example.document"
               :label="$t('message.example.document')"
               :items="example.documents"
               :rules="requiredRules"
@@ -240,11 +240,14 @@ export default {
     submit () {
       if (this.$refs.form.validate()) {
         const examples = this.examples.map(example => ({
-          'document_id': example.document_id,
+          'document': example.document,
           'sentence': example.sentence,
           'confirmed': example.confirmed,
-          'position': example.position
+          'position': -1,
+          'word_position': -1
         }))
+        this.meanings[0]['appears_set'] = examples
+
         $backend.$createEntry(this.term, this.meanings, examples)
           .then(this.success_snackbar = true)
           .catch(function () {
@@ -270,7 +273,7 @@ export default {
     addExample () {
       this.examples.push({
         documents: [],
-        document_id: '',
+        document: '',
         sents: [],
         sentence: '',
         periods: this.periods,
@@ -291,7 +294,7 @@ export default {
     },
     async getSentences (index) {
       const example = this.examples[index]
-      const res = await $backend.$getSentences(example['document_id'])
+      const res = await $backend.$getSentences(example['document'])
       example['sents'] = res.results.map(l => l.join(' '))
     }
   },
