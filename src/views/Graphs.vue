@@ -1,10 +1,34 @@
 <template>
   <v-container grid-list-md text-xs-center>
     <v-layout row wrap>
+      <v-toolbar color="blue" dark>
+        <v-spacer></v-spacer>
+        <v-toolbar-title v-text="meaning"></v-toolbar-title>
+        <v-spacer></v-spacer>
+      </v-toolbar>
+      <v-spacer></v-spacer>
       <v-flex v-for="d in datacollections" :key="d.datasets" xs4>
-        <template>
-          <line-chart :chart-data="d"></line-chart>
-        </template>
+        <v-card class="elevation-5">
+          <template>
+            <v-spacer></v-spacer>
+            <line-chart :chart-data="d"></line-chart>
+            <v-spacer></v-spacer>
+          </template>
+          <v-card-actions>
+            <v-btn flat>Share</v-btn>
+            <v-btn flat color="purple">Explore</v-btn>
+            <v-spacer></v-spacer>
+            <v-btn icon @click="show = !show">
+              <v-icon>{{ show ? 'keyboard_arrow_down' : 'keyboard_arrow_up' }}</v-icon>
+            </v-btn>
+          </v-card-actions>
+
+          <v-slide-y-transition>
+            <v-card-text
+              v-show="show"
+            >I'm a thing. But, like most politicians, he promised more than he could deliver. You won't have time for sleeping, soldier, not with all the bed making you'll be doing. Then we'll go with that data file! Hey, you add a one and two zeros to that or we walk! You're going to do his laundry? I've got to find a way to escape.</v-card-text>
+          </v-slide-y-transition>
+        </v-card>
       </v-flex>
     </v-layout>
   </v-container>
@@ -12,6 +36,7 @@
 
 <script>
 import LineChart from "@/components/LineChart";
+import $backend from "../backend";
 
 export default {
   components: {
@@ -21,91 +46,89 @@ export default {
   data() {
     return {
       datacollections: [],
-      labels: []
+      labels: [],
+      stats: {},
+      show: false,
+      dict: {},
+      meaning: "None"
     };
   },
   mounted() {
-    // this.getDataFromQuery();
     this.getDataFromQuery();
-    // console.log(this.datacollections);
-    // this.datacollection = this.fillData();
   },
 
   methods: {
-    fillData(labes, datasets) {
-      return {
-        // Data to be represented on x-axis
-        labels: this.labels,
-        datasets: this.getDummyData()
-      };
+    async getStatistics(id) {
+      return $backend
+        .$getStatistics(id)
+        .then(response => {
+          this.stats = response;
+        })
+        .catch(err => console.warn(err));
+      // console.table(meaning);
     },
-    getRandomInt() {
-      return Math.floor(Math.random() * (50 - 5 + 1)) + 5;
-    },
-
     async getDataFromQuery() {
-      // const docs = await $backend.$getStats(args);
-      //Must convert data here and place them into this.datacollections
-      /**
-       * The data must be converted to this 
-       * For each word in the result, the following object must be added :
-       * 
-       * [
-       *  {
-            label: "Meaning_1 of the word",
-            borderColor: "some color",
-            fill: false,
-            data: ["era_1:meaning_appartion" , "era_2:meaning_apparition" ... "era_n:meaning_apparation"]
-          },
-          ...
-          {
-            label: "Meaning_n of the word",
-            borderColor: "some color",
-            fill: false,
-            data: ["era_1:meaning_appartion" , "era_2:meaning_apparition" ... "era_n:meaning_apparation"]
-          },
-        ]
-       *
-       *In the end an array of these arrays must be constructed, it will be the datacollection of each 
-       *word array it represents a set of graphs, each graph is attached to a word.
-       *
-       *
-       * 
-       * 
-       *  
-       */
-      this.labels = ["Jahili", "Islamic", "Abbassi", "Modern"];
-      for (var i = 0; i < 5; i++) {
-        this.datacollections.push({
-          labels: this.labels,
-          datasets: this.getDummyData()
-        });
-      }
-    },
+      this.stats = await $backend.$getStatistics(41328);
+      const k = Object.keys(this.stats);
+      this.meaning = this.stats[k[0]]["meaning"];
+      const eras = this.stats[k[0]]["stats"];
+      this.labels = Object.keys(eras);
+      const categories = Object.keys(eras[this.labels[0]]);
 
-    getDummyData() {
-      var dummy_data = [];
-      var colors = [];
-      for (let i = 0; i < 2; i++) {
-        var random = [];
-        random[0] = Math.random() * (100 - 0) + 20;
-        for (let j = 1; j < this.labels.length; j++) {
-          random.push(Math.random() * (100 - random[j - 1]) + 20);
+      //const categsCount ;
+      for (var key in categories) {
+        this.dict[categories[key]] = [];
+        for (var key2 in eras) {
+          // console.log(categories[key]); // Category
+          // console.log(key2); // Era
+          // console.log(eras[key2][categories[key]]); Category in that era
+          this.dict[categories[key]].push(eras[key2][categories[key]]);
         }
+        console.log(this.dict);
+      }
 
+      for (var cat in this.dict) {
         var col = "#" + Math.floor(Math.random() * 16777215).toString(16);
 
-        dummy_data.push({
-          label: "Meaning " + i,
-          borderColor: col,
-          fill: false,
-          lineTension: 0.1,
-          borderWidth: 1.5,
-          data: random
+        this.datacollections.push({
+          labels: this.labels,
+          datasets: [
+            {
+              label: cat,
+              borderColor: col,
+              fill: false,
+              lineTension: 0.1,
+              borderWidth: 5,
+              data: this.dict[cat]
+            }
+          ]
         });
       }
-      return dummy_data;
     }
+
+    // getDummyData() {
+    //   var dummy_data = [];
+    //   var colors = [];
+    //   for (let i = 0; i < 2; i++) {
+    //     var random = [];
+    //     random[0] = Math.random() * (100 - 0) + 20;
+    //     for (let j = 1; j < this.labels.length; j++) {
+    //       random.push(Math.random() * (100 - random[j - 1]) + 20);
+    //     }
+
+    //     var col = "#" + Math.floor(Math.random() * 16777215).toString(16);
+
+    //     dummy_data.push({
+    //       label: "Meaning " + i,
+    //       borderColor: col,
+    //       fill: false,
+    //       lineTension: 0.1,
+    //       borderWidth: 1.5,
+    //       data: random
+    //     });
+    //   }
+    //   return dummy_data;
+    // }
   }
 };
 </script>

@@ -38,6 +38,8 @@ $backend.$getPostags = () => $backend.get('postags/')
 $backend.$getDocument = (id) => $backend.get('documents/' + id, { params: { raw: true } })
 $backend.$getSentences = (id) => $backend.get('sentences/', { params: { id } })
 
+$backend.$getStatistics = (word_id) => $backend.get('statistics/word?id=' + word_id, { params: { raw: true } })
+
 $backend.$createEntry = (term, meanings, examples) =>
   $backend.post('entries/', {
     term: term,
