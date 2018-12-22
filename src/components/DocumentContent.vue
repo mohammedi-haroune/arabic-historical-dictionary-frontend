@@ -32,7 +32,7 @@
         leave-active-class="animated zoomOut"
       >
         <v-speed-dial
-          v-show="this.selected && !dialog"
+          v-show="this.selected.sentence && !dialog"
           v-model="fab"
           left
           bottom
@@ -119,8 +119,8 @@
         </v-layout>
         <v-divider></v-divider>
         <v-card-text>
-          <p :key="i" :id="i" v-for="(sent, i) in sents">
-            {{ sent.join(' ') }}
+          <p :key="sent.position" :id="sent.position" v-for="sent in sents">
+            {{ sent.sentence.join(' ') }}
           </p>
           <v-flex v-if="loading_sents" ma-5 xs10 text-xs-center>
             <v-progress-circular
@@ -177,7 +177,7 @@ export default {
     selected_example: function () {
       return {
         documents: [this.doc],
-        document_id: this.doc.id,
+        document: this.doc.id,
         sents: [this.selected],
         sentence: this.selected,
         periods: [this.doc.period],
@@ -205,7 +205,7 @@ export default {
       this.loaded_pages = this.loaded_pages + 1
       const res = await $backend.$getSentences(this.id, this.loaded_pages)
       this.pages = res.count / 12
-      this.sents = this.sents.concat(res.results.map(o => o.sentence))
+      this.sents = this.sents.concat(res.results)
       this.loading_sents = false
     },
     log () {
@@ -223,22 +223,27 @@ export default {
     const self = this
     document.onmouseup = document.onkeyup = document.onselectionchange = function () {
       let text = ''
+      let id = -1
       if (window.getSelection) {
         text = window.getSelection().toString()
-        // console.log('id', window.getSelection().baseNode.parentNode.id)
+        id = window.getSelection().baseNode.parentNode.id
+        console.log('id', id)
       } else if (document.selection && document.selection.type !== 'Control') {
         text = document.selection.createRange().text
       }
-      self.selected = text.trim()
-      if (self.selected === '') {
+      if (text.trim() === '') {
         this.fab = false
+      }
+      self.selected = {
+        id: id,
+        sentence: text.trim()
       }
       console.log('selected', self.selected)
     }
   },
   watch: {
     selected (val) {
-      if (val === '') {
+      if (val.sentence === '') {
         console.log('fab closing')
         this.fab = false
       }

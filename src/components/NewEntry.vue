@@ -62,7 +62,7 @@
         </v-flex>
       </v-layout>
     </v-container>
-    <v-container v-if="!inserting_example">
+    <v-container>
       <h3>
         {{ $t('message.meaning.header') }}
       </h3>
@@ -280,6 +280,7 @@ export default {
       this.examples.splice(index, 1)
     },
     addExample () {
+      console.log('adding example yaw !')
       this.examples.push({
         documents: [],
         document: '',
@@ -318,8 +319,11 @@ export default {
     if (this.inserting_example) {
       console.log('received example_to_insert: ', this.example_to_insert)
       this.examples.push(this.example_to_insert)
-      this.terms = this.example_to_insert.sentence.split(' ')
+      this.terms = this.example_to_insert.sentence.sentence.split(' ')
       this.term_tag = 'v-autocomplete'
+    } else {
+      // ensure that at least one example is added
+      this.addExample()
     }
     if (this.inserting_term) {
       console.log('received term_to_insert', this.term_to_insert)
@@ -329,6 +333,9 @@ export default {
       console.log('received meaning_to_insert', this.meaning_to_insert)
       this.meanings = [ this.meaning_to_insert ]
       this.meaning = this.meaning_to_insert
+    } else {
+      // ensure that at least one meaning is added
+      this.addMeaning()
     }
   }
 }
