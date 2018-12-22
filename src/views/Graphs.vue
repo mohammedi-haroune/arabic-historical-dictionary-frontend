@@ -35,60 +35,60 @@
 </template>
 
 <script>
-import LineChart from "@/components/LineChart";
-import $backend from "../backend";
+import LineChart from '@/components/LineChart'
+import $backend from '../backend'
 
 export default {
   components: {
     LineChart
   },
 
-  data() {
+  data () {
     return {
       datacollections: [],
       labels: [],
       stats: {},
       show: false,
       dict: {},
-      meaning: "None"
-    };
+      meaning: 'None'
+    }
   },
-  mounted() {
-    this.getDataFromQuery();
+  mounted () {
+    this.getDataFromQuery()
   },
 
   methods: {
-    async getStatistics(id) {
+    async getStatistics (id) {
       return $backend
         .$getStatistics(id)
         .then(response => {
-          this.stats = response;
+          this.stats = response
         })
-        .catch(err => console.warn(err));
+        .catch(err => console.warn(err))
       // console.table(meaning);
     },
-    async getDataFromQuery() {
-      this.stats = await $backend.$getStatistics(41328);
-      const k = Object.keys(this.stats);
-      this.meaning = this.stats[k[0]]["meaning"];
-      const eras = this.stats[k[0]]["stats"];
-      this.labels = Object.keys(eras);
-      const categories = Object.keys(eras[this.labels[0]]);
+    async getDataFromQuery () {
+      this.stats = await $backend.$getStatistics(41328)
+      const k = Object.keys(this.stats)
+      this.meaning = this.stats[k[0]]['meaning']
+      const eras = this.stats[k[0]]['stats']
+      this.labels = Object.keys(eras)
+      const categories = Object.keys(eras[this.labels[0]])
 
-      //const categsCount ;
+      // const categsCount ;
       for (var key in categories) {
-        this.dict[categories[key]] = [];
+        this.dict[categories[key]] = []
         for (var key2 in eras) {
           // console.log(categories[key]); // Category
           // console.log(key2); // Era
           // console.log(eras[key2][categories[key]]); Category in that era
-          this.dict[categories[key]].push(eras[key2][categories[key]]);
+          this.dict[categories[key]].push(eras[key2][categories[key]])
         }
-        console.log(this.dict);
+        console.log(this.dict)
       }
 
       for (var cat in this.dict) {
-        var col = "#" + Math.floor(Math.random() * 16777215).toString(16);
+        var col = '#' + Math.floor(Math.random() * 16777215).toString(16)
 
         this.datacollections.push({
           labels: this.labels,
@@ -102,7 +102,7 @@ export default {
               data: this.dict[cat]
             }
           ]
-        });
+        })
       }
     }
 
@@ -130,7 +130,7 @@ export default {
     //   return dummy_data;
     // }
   }
-};
+}
 </script>
 
 <style>
