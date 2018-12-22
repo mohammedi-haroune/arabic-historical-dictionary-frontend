@@ -18,13 +18,7 @@
 
 <template>
   <v-app :dark="isDark">
-    <v-navigation-drawer
-      :mini-variant="miniVariant"
-      v-model="drawer"
-      :right="rtl"
-      fixed
-      app
-    >
+    <v-navigation-drawer :mini-variant="miniVariant" v-model="drawer" :right="rtl" fixed app>
       <v-list>
         <v-list-tile router :to="item.to" :key="i" v-for="(item, i) in items" exact>
           <v-list-tile-action>
@@ -39,24 +33,10 @@
     <v-toolbar fixed>
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
     </v-toolbar>
-    <v-toolbar  fixed app>
+    <v-toolbar fixed app>
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-<<<<<<< HEAD
       <v-btn icon @click.native.stop="miniVariant = !miniVariant">
-        <v-icon v-html="miniVariant ? 'chevron_right' : 'chevron_left'"></v-icon>
-      </v-btn>
-      <v-btn icon @click.native.stop="clipped = !clipped">
-        <v-icon>web</v-icon>
-      </v-btn>
-      <v-btn icon @click.native.stop="fixed = !fixed">
-        <v-icon>remove</v-icon>
-=======
-      <v-btn
-        icon
-        @click.native.stop="miniVariant = !miniVariant"
-      >
         <v-icon v-html="chevron"></v-icon>
->>>>>>> e974794f59f6c71ac6d5f7172efd11f774424806
       </v-btn>
       <v-toolbar-title v-text="$t('message.title')"></v-toolbar-title>
       <v-spacer></v-spacer>
@@ -68,7 +48,7 @@
     <v-content>
       <v-container fluid>
         <v-slide-y-transition mode="out-in">
-            <router-view></router-view>
+          <router-view></router-view>
         </v-slide-y-transition>
       </v-container>
     </v-content>
@@ -108,7 +88,6 @@ export default {
         { icon: "fa fa-chart-bar", title: "Graphs", to: "/graphs" },
         { icon: "fa fa-info-circle", title: "About", to: "/about" },
         { icon: "fa fa-info-circle", title: "Dashboard", to: "/dashboard" }
-
       ],
       drawer: true,
       fixed: false,
@@ -129,17 +108,17 @@ export default {
     }
   },
   computed: {
-    chevron () {
+    chevron() {
       if (this.miniVariant) {
-        if (this.rtl) return 'chevron_left'
-        else return 'chevron_right'
+        if (this.rtl) return "chevron_left";
+        else return "chevron_right";
       } else {
-        if (this.rtl) return 'chevron_right'
-        else return 'chevron_left'
+        if (this.rtl) return "chevron_right";
+        else return "chevron_left";
       }
     },
-    rtl () {
-      return this.$vuetify.rtl
+    rtl() {
+      return this.$vuetify.rtl;
     }
   },
   mounted() {
