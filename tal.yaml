@@ -1,0 +1,93 @@
+# [START kubernetes_deployment]
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: tal
+  labels:
+    app: tal
+spec:
+  template:
+    metadata:
+      labels:
+        app: tal
+    spec:
+      containers:
+      - name: tal-backend
+        image: gcr.io/arabic-historical-dictionary/tal-backend
+        env:
+            - name: DATABASE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql
+                  key: username
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql
+                  key: password
+        volumeMounts:
+          - name: tal-disk
+            mountPath: /root
+        ports:
+        - containerPort: 8080
+
+      - image: gcr.io/cloudsql-docker/gce-proxy:1.05
+        name: cloudsql-proxy
+        command: ["/cloud_sql_proxy", "--dir=/cloudsql",
+                  "-instances=arabic-historical-dictionary:us-central1:tal-sql=tcp:5432",
+                  "-credential_file=/secrets/cloudsql/credentials.json"]
+
+        volumeMounts:
+          - name: cloudsql-oauth-credentials
+            mountPath: /secrets/cloudsql
+            readOnly: true
+          - name: ssl-certs
+            mountPath: /etc/ssl/certs
+          - name: cloudsql
+            mountPath: /cloudsql
+
+      - image: gcr.io/arabic-historical-dictionary/tal-frontend
+        name: tal-frontend
+        ports:
+        - containerPort: 80
+        
+      volumes:
+        - name: cloudsql-oauth-credentials
+          secret:
+            secretName: cloudsql-oauth-credentials
+        - name: ssl-certs
+          hostPath:
+            path: /etc/ssl/certs
+        - name: cloudsql
+          emptyDir:
+        - name: tal-disk
+          gcePersistentDisk:
+            # This disk must already exist.
+            pdName: tal-disk-europe
+            readOnly: true
+            fsType: ext4
+
+# [END kubernetes_deployment]
+
+---
+
+# [START service]
+apiVersion: v1
+kind: Service
+metadata:
+  name: tal
+  labels:
+    app: tal
+spec:
+  loadBalancerIP: "35.195.8.50"
+  type: LoadBalancer
+  ports:
+  - name: tal-frontend-port
+    port: 80
+    targetPort: 80
+  - name: tal-backend-port
+    port: 8080
+    targetPort: 8080
+  selector:
+    app: tal
+# [END service]

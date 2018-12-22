@@ -1,8 +1,14 @@
 import axios from 'axios'
 
+let baseUrl = process.env.VUE_APP_API_URL
+let timeout = process.env.VUE_APP_API_CALL_TIMEOUT
+console.log('VUE_APP_API_URL', baseUrl)
+console.log('VUE_APP_API_CALL_TIMEOUT', timeout)
+
 let $backend = axios.create({
-  baseURL: 'http://127.0.0.1:8000/api/',
-  timeout: 5000,
+  // baseURL: 'http://104.197.159.71/api/',
+  baseURL: baseUrl,
+  timeout: timeout,
   headers: {
     'Content-Type': 'application/json',
     'X-CSRFTOKEN': document.cookie.split(';')[0].split('=')[1]
@@ -20,12 +26,12 @@ $backend.interceptors.response.use(
     return Promise.reject(error)
   })
 
-$backend.$fetchDocuments = (periods, categories, page) =>
-  $backend.get('documents/', { params: { periods, categories, page } })
+$backend.$fetchDocuments = (periods, categories, query, page) =>
+  $backend.get('documents/', { params: { periods, categories, query, page } })
 
 $backend.$getDictionary = (id) => $backend.get('dictionaries/' + id)
 
-$backend.$getEntrySet = (page) => $backend.get('entries/', { params: { page } })
+$backend.$getEntrySet = (query, page) => $backend.get('entries/', { params: { query, page } })
 
 $backend.$getPeriods = () => $backend.get('periods/')
 
@@ -36,7 +42,10 @@ $backend.$getDicts = () => $backend.get('dictionaries/', { params: { entry_set: 
 $backend.$getPostags = () => $backend.get('postags/')
 
 $backend.$getDocument = (id) => $backend.get('documents/' + id, { params: { raw: true } })
-$backend.$getSentences = (id) => $backend.get('sentences/', { params: { id } })
+$backend.$getSentences = (id, page = 1) => $backend.get('sentences/', { params: { id, page } })
+
+$backend.$fetchAppears = (id) => $backend.get('meaning_appears/' + id)
+$backend.$fetchWordAppears = (params) => $backend.get('meaning_appears/', { params })
 
 $backend.$getStatistics = (word_id) => $backend.get('statistics/word?id=' + word_id, { params: { raw: true } })
 
@@ -44,8 +53,7 @@ $backend.$createEntry = (term, meanings, examples) =>
   $backend.post('entries/', {
     term: term,
     dictionary: 1,
-    meaning_set: meanings,
-    appears_set: examples
+    meaning_set: meanings
   })
 
 export default $backend

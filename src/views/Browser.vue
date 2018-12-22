@@ -9,6 +9,8 @@
       periods: "الفترات الزمنية"
       categories: "الاقسام"
       search: "البحث"
+      not_found: "لم يتم العثور على نتائج"
+
 </i18n>
 
 <template>
@@ -30,6 +32,7 @@
         multiple
       >
         <v-list-tile
+          v-if="periods.length > 0"
           slot="prepend-item"
           ripple
           @click="togglePeriods"
@@ -56,6 +59,7 @@
         multiple
       >
         <v-list-tile
+          v-if="categories.length > 0"
           slot="prepend-item"
           ripple
           @click="toggleCategories"
@@ -68,24 +72,46 @@
       </v-select>
     </v-flex>
     <v-flex mx-4 xs12>
-      <v-text-field solo :label="$t('message.search')" @input="getDocuments"
+      <v-text-field v-model="query" solo :label="$t('message.search')" @input="getDocuments"
                     prepend-icon="search"
       ></v-text-field>
     </v-flex>
     <v-flex xs10 text-xs-center>
       <v-pagination
+        v-if="num_pages !== 0"
+        total-visible="15"
         @input="getDocuments"
         v-model="page"
         :length="num_pages"
       ></v-pagination>
     </v-flex>
-    <template v-for="doc in documents">
+    <v-flex pa-5 ma-5 xs10 text-xs-center v-if="loading">
+      <v-progress-circular
+        :size="70"
+        :width="7"
+        color="primary"
+        indeterminate
+      ></v-progress-circular>
+    </v-flex>
+
+    <template v-else-if="documents.length > 0" v-for="doc in documents">
       <v-flex :key="doc.fileid" pa-2 md4>
         <document-sample :key="doc.fileid" :doc="doc"></document-sample>
       </v-flex>
     </template>
+
+    <v-flex v-else ma-4 xs12>
+        <v-alert
+          :value="true"
+          type="warning"
+        >
+          {{ $t('message.not_found') }}
+        </v-alert>
+    </v-flex>
     <v-flex xs10 text-xs-center>
       <v-pagination
+        v-if="num_pages !== 0"
+        total-visible="15"
         @input="getDocuments"
         v-model="page"
         :length="num_pages"
@@ -106,7 +132,9 @@ export default {
       documents: [],
       selectedPeriods: [],
       selectedCategories: [],
+      query: '',
       page: 1,
+      loading: false,
       num_pages: 0
     }
   },
@@ -115,9 +143,11 @@ export default {
   },
   methods: {
     async getDocuments () {
-      const docs = await $backend.$fetchDocuments(this.selectedPeriods, this.selectedCategories, this.page)
+      this.loading = true
+      const docs = await $backend.$fetchDocuments(this.selectedPeriods, this.selectedCategories, this.query, this.page)
       this.documents = docs.results
       this.num_pages = Math.round(docs.count / 12)
+      this.loading = false
     },
     togglePeriods () {
       this.$nextTick(() => {

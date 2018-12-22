@@ -27,22 +27,24 @@
     <v-snackbar
       v-model="success_snackbar"
       color="success"
-      :timeout="20000"
-      top
+      :timeout="2000"
+      buttom
+      absolute
       left
     >
       {{ $t('message.example.created') }}
     </v-snackbar>
+    <v-snackbar
+      color="error"
+      :timeout="2000"
+      absolute
+      v-model="failure_snackbar"
+      buttom
+      left
+    >
+      {{ $t('message.example.failure') }}
+    </v-snackbar>
     <v-container>
-      <v-snackbar
-        color="error"
-        :timeout="2000"
-        v-model="failure_snackbar"
-        top
-        left
-      >
-        {{ $t('message.example.failure') }}
-      </v-snackbar>
 
       <h3>{{ $t('message.term') }}</h3>
       <v-layout>
@@ -77,6 +79,7 @@
         row>
         <v-flex xs10 md5 pa-2>
           <v-autocomplete
+            :disabled="inserting_meaning"
             v-model="meaning.posTag"
             :label="$t('message.meaning.posTag')"
             :items="postags"
@@ -87,6 +90,7 @@
         </v-flex>
         <v-flex  xs10 md5 pa-2>
           <v-text-field
+            :disabled="inserting_meaning"
             v-model="meaning.text"
             :label="$t('message.meaning.text')"
             :rules="requiredRules"
@@ -94,16 +98,16 @@
           >
           </v-text-field>
         </v-flex>
-        <v-flex pa-2>
+        <!-- <v-flex pa-2 v-if="!inserting_meaning">
           <v-btn icon>
             <v-icon meduim @click="deleteMeaning(index)">delete</v-icon>
           </v-btn>
         </v-flex>
-        <v-flex pa-2>
+        <v-flex pa-2 v-if="!inserting_meaning">
           <v-btn icon v-show="index === meanings.length - 1">
             <v-icon meduim @click="addMeaning">add</v-icon>
           </v-btn>
-        </v-flex>
+        </v-flex> -->
       </v-layout>
     </v-container>
     <v-container wrap>
@@ -149,7 +153,7 @@
           <v-flex xs10 md4 pa-2>
             <v-autocomplete
               :disabled="inserting_example"
-              v-model="example.document_id"
+              v-model="example.document"
               :label="$t('message.example.document')"
               :items="example.documents"
               :rules="requiredRules"
@@ -167,6 +171,9 @@
               :label="$t('message.example.sentence')"
               :items="example.sents"
               :rules="requiredRules"
+              item-text="sentence"
+              @input="log(example)"
+              return-object
               required
             >
             </v-autocomplete>
@@ -207,6 +214,7 @@ export default {
   props: {
     example_to_insert: Object,
     term_to_insert: String,
+    meaning_to_insert: Object,
     page: Number
   },
   data: () => ({
@@ -218,8 +226,8 @@ export default {
     examples: [],
     terms: [],
     success_snackbar: false,
-    failure_snackbar: true,
-    term_tag: 'v-autocomplete'
+    failure_snackbar: false,
+    term_tag: 'v-text-field'
   }),
   computed: {
     inserting_example: function () {
@@ -228,21 +236,31 @@ export default {
     inserting_term: function () {
       return typeof this.term_to_insert !== 'undefined'
     },
+    inserting_meaning: function () {
+      return typeof this.meaning_to_insert !== 'undefined'
+    },
     ...mapState(['postags', 'dictionaries', 'periods', 'categories'])
   },
   methods: {
     submit () {
       if (this.$refs.form.validate()) {
         const examples = this.examples.map(example => ({
-          'document_id': example.document_id,
-          'sentence': example.sentence,
+          'document': example.document,
+          'sentence': example.sentence.sentence,
           'confirmed': example.confirmed,
-          'position': example.position
+          'position': example.sentence.position,
+          'word_position': example.sentence.sentence.indexOf(this.term)
         }))
+        this.meanings[0]['appears_set'] = examples
+        const self = this
         $backend.$createEntry(this.term, this.meanings, examples)
-          .then(this.success_snackbar = true)
-          .catch(function () {
-            this.failure_snackbar = true
+          .then(function (response) {
+            console.log(response)
+            self.success_snackbar = true
+          })
+          .catch(function (error) {
+            console.error(error)
+            self.failure_snackbar = true
           })
       }
     },
@@ -264,7 +282,7 @@ export default {
     addExample () {
       this.examples.push({
         documents: [],
-        document_id: '',
+        document: '',
         sents: [],
         sentence: '',
         periods: this.periods,
@@ -280,31 +298,37 @@ export default {
       if (example['period']) periods.push(example['period'])
       const categories = []
       if (example['category']) categories.push(example['category'])
-      const docs = await $backend.$fetchDocuments(periods, categories, 1)
+      const docs = await $backend.$fetchDocuments(periods, categories, '')
       example['documents'] = docs.results
     },
     async getSentences (index) {
       const example = this.examples[index]
-      const res = await $backend.$getSentences(example['document_id'])
-      example['sents'] = res.results.map(l => l.join(' '))
+      const res = await $backend.$getSentences(example['document'])
+      example['sents'] = res.results.map(o => {
+        o.sentence = o.sentence.join(' ')
+        return o
+      })
+    },
+    log (example) {
+      console.log(example.sentence)
     }
   },
   mounted () {
     console.log('mounted !')
-    if (this.example_to_insert !== undefined) {
+    if (this.inserting_example) {
       console.log('received example_to_insert: ', this.example_to_insert)
       this.examples.push(this.example_to_insert)
       this.terms = this.example_to_insert.sentence.split(' ')
       this.term_tag = 'v-autocomplete'
     }
-    console.log('received page', this.page)
-    console.log('received term_to_insert', this.term_to_insert)
-
-    if (typeof this.term_to_insert !== 'undefined') {
+    if (this.inserting_term) {
       console.log('received term_to_insert', this.term_to_insert)
-      console.log('received page', this.page)
       this.term = this.term_to_insert
-      this.terms = [this.term_to_insert]
+    }
+    if (this.inserting_meaning) {
+      console.log('received meaning_to_insert', this.meaning_to_insert)
+      this.meanings = [ this.meaning_to_insert ]
+      this.meaning = this.meaning_to_insert
     }
   }
 }

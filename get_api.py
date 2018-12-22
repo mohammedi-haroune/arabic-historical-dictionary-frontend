@@ -1,0 +1,15 @@
+import os
+from kubernetes import client, config
+
+configuration = client.Configuration()
+configuration.api_key["authorization"] = 'eyJhbGciOiJSUzI1NiIsImtpZCI6IiJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJkZWZhdWx0Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6ImFwaS1zZXJ2aWNlLWFjY291bnQtdG9rZW4tbDJjZHciLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiYXBpLXNlcnZpY2UtYWNjb3VudCIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6IjMwMjEyYzg1LWZjMGQtMTFlOC04NmYzLTQyMDEwYTg0MDA5OSIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDpkZWZhdWx0OmFwaS1zZXJ2aWNlLWFjY291bnQifQ.F37ZdifuuQARcbviFCYeBkQTgT3SjX-o5E0LPKwe_H1NnGNulapfZk0-_ySds9j3iUdo1LgB1xCnn2xcvVaEm24qNY0jHqrd6ngYBc7nhufcK5w_qPOVh_6omIkq5RdXE08sYfs1dhqYu_REP0CJHtTamXKBdFti2PdpI1Nagy2EDzpcklHFodN8rPR8bMnxIuD6QGOtwj-6U1wtGtpljWypQ77fi05Upx_l97uOJBmLYneDA2GMwhxEquHpwbxaMhd31KgM8Lr_vPONXBDu_WPRGOsCZKHjw_gNoSi6GsSgJ3j0Metr1uXViExmYebPemDvFB19i3sxg2cmbH2wJg'
+configuration.api_key_prefix['authorization'] = 'Bearer'
+configuration.host = 'https://104.199.11.230'
+configuration.ssl_ca_cert = 'cert_file'
+
+v1 = client.CoreV1Api(client.ApiClient(configuration))
+
+service = v1.read_namespaced_service('tal-backend', 'default')
+ip = service.status.load_balancer.ingress[0].ip
+port = service.spec.ports[0].port
+print('VUE_APP_API_URL=http://' + ip + ':' + str(port) + '/api/')

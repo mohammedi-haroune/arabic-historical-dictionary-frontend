@@ -7,13 +7,19 @@
     message:
       title: "المعين: القاموس التاريخي"
       hello: "السلام عليكم"
+      welcome: "السلام عليكم"
+      corpus: "أضف الملفات"
+      browser: "تصفح الملفات"
+      add_entry: "أضف مصلح"
+      dict: "القاموس"
+      hist_dict: "القاموس التاريخي"
+      about: "من نحن ؟"
 </i18n>
 
 <template>
   <v-app :dark="isDark">
     <v-navigation-drawer
       :mini-variant="miniVariant"
-      :clipped="clipped"
       v-model="drawer"
       :right="rtl"
       fixed
@@ -33,8 +39,9 @@
     <v-toolbar fixed>
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
     </v-toolbar>
-    <v-toolbar fixed app :clipped-left="clipped">
+    <v-toolbar  fixed app>
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+<<<<<<< HEAD
       <v-btn icon @click.native.stop="miniVariant = !miniVariant">
         <v-icon v-html="miniVariant ? 'chevron_right' : 'chevron_left'"></v-icon>
       </v-btn>
@@ -43,6 +50,13 @@
       </v-btn>
       <v-btn icon @click.native.stop="fixed = !fixed">
         <v-icon>remove</v-icon>
+=======
+      <v-btn
+        icon
+        @click.native.stop="miniVariant = !miniVariant"
+      >
+        <v-icon v-html="chevron"></v-icon>
+>>>>>>> e974794f59f6c71ac6d5f7172efd11f774424806
       </v-btn>
       <v-toolbar-title v-text="$t('message.title')"></v-toolbar-title>
       <v-spacer></v-spacer>
@@ -54,9 +68,7 @@
     <v-content>
       <v-container fluid>
         <v-slide-y-transition mode="out-in">
-          <keep-alive>
             <router-view></router-view>
-          </keep-alive>
         </v-slide-y-transition>
       </v-container>
     </v-content>
@@ -96,8 +108,8 @@ export default {
         { icon: "fa fa-chart-bar", title: "Graphs", to: "/graphs" },
         { icon: "fa fa-info-circle", title: "About", to: "/about" },
         { icon: "fa fa-info-circle", title: "Dashboard", to: "/dashboard" }
+
       ],
-      clipped: false,
       drawer: true,
       fixed: false,
       miniVariant: false,
@@ -117,8 +129,17 @@ export default {
     }
   },
   computed: {
-    rtl() {
-      return this.$vuetify.rtl;
+    chevron () {
+      if (this.miniVariant) {
+        if (this.rtl) return 'chevron_left'
+        else return 'chevron_right'
+      } else {
+        if (this.rtl) return 'chevron_right'
+        else return 'chevron_left'
+      }
+    },
+    rtl () {
+      return this.$vuetify.rtl
     }
   },
   mounted() {
