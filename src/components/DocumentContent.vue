@@ -205,7 +205,7 @@ export default {
       this.loaded_pages = this.loaded_pages + 1
       const res = await $backend.$getSentences(this.id, this.loaded_pages)
       this.pages = res.count / 12
-      this.sents = this.sents.concat(res.results)
+      this.sents = this.sents.concat(res.results.map(o => o.sentence))
       this.loading_sents = false
     },
     log () {
