@@ -5,8 +5,9 @@
         :key="i"
         :color="colors[i]"
         fill-dot
-        :right="i % 2 === 0"
-        :left="i % 2 !== 0"
+        :right="i % 2 !== 0"
+        :left="i % 2 === 0"
+        :small="i % 2 !== 0"
         v-if="appears_for(period.id).length > 0"
       >
         <v-card>
@@ -172,7 +173,7 @@ export default {
   },
   computed: {
     sorted_periods: function () {
-      return _.orderBy(this.periods, 'start')
+      return _.orderBy(this.periods.filter(({id}) => this.appears_for(id).length > 0), 'start')
     },
     ...mapState(['periods'])
   },
