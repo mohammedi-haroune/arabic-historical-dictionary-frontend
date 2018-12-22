@@ -27,22 +27,24 @@
     <v-snackbar
       v-model="success_snackbar"
       color="success"
-      :timeout="20000"
-      top
+      :timeout="2000"
+      buttom
+      absolute
       left
     >
       {{ $t('message.example.created') }}
     </v-snackbar>
+    <v-snackbar
+      color="error"
+      :timeout="2000"
+      absolute
+      v-model="failure_snackbar"
+      buttom
+      left
+    >
+      {{ $t('message.example.failure') }}
+    </v-snackbar>
     <v-container>
-      <v-snackbar
-        color="error"
-        :timeout="2000"
-        v-model="failure_snackbar"
-        top
-        left
-      >
-        {{ $t('message.example.failure') }}
-      </v-snackbar>
 
       <h3>{{ $t('message.term') }}</h3>
       <v-layout>
@@ -169,6 +171,9 @@
               :label="$t('message.example.sentence')"
               :items="example.sents"
               :rules="requiredRules"
+              item-text="sentence"
+              @input="log(example)"
+              return-object
               required
             >
             </v-autocomplete>
@@ -241,17 +246,21 @@ export default {
       if (this.$refs.form.validate()) {
         const examples = this.examples.map(example => ({
           'document': example.document,
-          'sentence': example.sentence,
+          'sentence': example.sentence.sentence,
           'confirmed': example.confirmed,
-          'position': -1,
-          'word_position': -1
+          'position': example.sentence.position,
+          'word_position': example.sentence.sentence.indexOf(this.term)
         }))
         this.meanings[0]['appears_set'] = examples
-
+        const self = this
         $backend.$createEntry(this.term, this.meanings, examples)
-          .then(this.success_snackbar = true)
-          .catch(function () {
-            this.failure_snackbar = true
+          .then(function (response) {
+            console.log(response)
+            self.success_snackbar = true
+          })
+          .catch(function (error) {
+            console.error(error)
+            self.failure_snackbar = true
           })
       }
     },
@@ -295,7 +304,13 @@ export default {
     async getSentences (index) {
       const example = this.examples[index]
       const res = await $backend.$getSentences(example['document'])
-      example['sents'] = res.results.map(l => l.join(' '))
+      example['sents'] = res.results.map(o => {
+        o.sentence = o.sentence.join(' ')
+        return o
+      })
+    },
+    log (example) {
+      console.log(example.sentence)
     }
   },
   mounted () {
