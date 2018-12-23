@@ -18,21 +18,9 @@
 
 <template>
   <v-app :dark="isDark">
-    <v-navigation-drawer
-      :mini-variant="miniVariant"
-      v-model="drawer"
-      :right="rtl"
-      fixed
-      app
-    >
+    <v-navigation-drawer :mini-variant="miniVariant" v-model="drawer" :right="rtl" fixed app>
       <v-list>
-        <v-list-tile
-          router
-          :to="item.to"
-          :key="i"
-          v-for="(item, i) in items"
-          exact
-        >
+        <v-list-tile router :to="item.to" :key="i" v-for="(item, i) in items" exact>
           <v-list-tile-action>
             <v-icon v-html="item.icon"></v-icon>
           </v-list-tile-action>
@@ -45,20 +33,14 @@
     <v-toolbar fixed>
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
     </v-toolbar>
-    <v-toolbar  fixed app>
+    <v-toolbar fixed app>
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-      <v-btn
-        icon
-        @click.native.stop="miniVariant = !miniVariant"
-      >
+      <v-btn icon @click.native.stop="miniVariant = !miniVariant">
         <v-icon v-html="chevron"></v-icon>
       </v-btn>
       <v-toolbar-title v-text="$t('message.title')"></v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn
-        icon
-        @click.native.stop="rightDrawer = !rightDrawer"
-      >
+      <v-btn icon @click.native.stop="rightDrawer = !rightDrawer">
         <v-icon>menu</v-icon>
       </v-btn>
     </v-toolbar>
@@ -66,17 +48,12 @@
     <v-content>
       <v-container fluid>
         <v-slide-y-transition mode="out-in">
-            <router-view></router-view>
+          <router-view></router-view>
         </v-slide-y-transition>
       </v-container>
     </v-content>
 
-    <v-navigation-drawer
-      temporary
-      :right="!rtl"
-      v-model="rightDrawer"
-      fixed
-    >
+    <v-navigation-drawer temporary :right="!rtl" v-model="rightDrawer" fixed>
       <v-list subheader>
         <v-subheader>Appearance</v-subheader>
         <v-list-tile @click="isDark = !isDark">
@@ -97,16 +74,28 @@
 
 <script>
 export default {
-  data () {
+  data() {
     return {
       items: [
-        { icon: 'apps', title: this.$t('message.welcome'), to: '/welcome' },
-        { icon: 'create', title: this.$t('message.corpus'), to: '/corpus' },
-        { icon: 'explore', title: this.$t('message.browser'), to: '/browser' },
-        { icon: 'edit', title: this.$t('message.add_entry'), to: '/entry' },
-        { icon: 'fa fa-book', title: this.$t('message.dict'), to: '/dictionary' },
-        { icon: 'fa fa-book-open', title: this.$t('message.hist_dict'), to: '/dictionary2' },
-        { icon: 'fa fa-info-circle', title: this.$t('message.about'), to: '/about' }
+        { icon: "apps", title: this.$t("message.welcome"), to: "/welcome" },
+        { icon: "create", title: this.$t("message.corpus"), to: "/corpus" },
+        { icon: "explore", title: this.$t("message.browser"), to: "/browser" },
+        { icon: "edit", title: this.$t("message.add_entry"), to: "/entry" },
+        {
+          icon: "fa fa-book",
+          title: this.$t("message.dict"),
+          to: "/dictionary"
+        },
+        {
+          icon: "fa fa-book-open",
+          title: this.$t("message.hist_dict"),
+          to: "/dictionary2"
+        },
+        {
+          icon: "fa fa-info-circle",
+          title: this.$t("message.about"),
+          to: "/about"
+        }
       ],
       drawer: true,
       fixed: false,
@@ -114,37 +103,37 @@ export default {
       rightDrawer: false,
       isDark: false,
       locale: this.$i18n.locale
-    }
+    };
   },
   watch: {
-    '$i18n.locale' (val) {
-      this.$vuetify.rtl = val === 'ar'
-      this.$vuetify.lang = val
+    "$i18n.locale"(val) {
+      this.$vuetify.rtl = val === "ar";
+      this.$vuetify.lang = val;
     },
-    '$veutify.lang' (val) {
-      this.$i18n.locale = val
-      this.$vuetify.rtl = val === 'ar'
+    "$veutify.lang"(val) {
+      this.$i18n.locale = val;
+      this.$vuetify.rtl = val === "ar";
     }
   },
   computed: {
-    chevron () {
+    chevron() {
       if (this.miniVariant) {
-        if (this.rtl) return 'chevron_left'
-        else return 'chevron_right'
+        if (this.rtl) return "chevron_left";
+        else return "chevron_right";
       } else {
-        if (this.rtl) return 'chevron_right'
-        else return 'chevron_left'
+        if (this.rtl) return "chevron_right";
+        else return "chevron_left";
       }
     },
-    rtl () {
-      return this.$vuetify.rtl
+    rtl() {
+      return this.$vuetify.rtl;
     }
   },
-  mounted () {
-    this.$store.dispatch('getPeriods')
-    this.$store.dispatch('getCategories')
-    this.$store.dispatch('getPostags')
-    this.$store.dispatch('getDicts')
+  mounted() {
+    this.$store.dispatch("getPeriods");
+    this.$store.dispatch("getCategories");
+    this.$store.dispatch("getPostags");
+    this.$store.dispatch("getDicts");
   }
-}
+};
 </script>

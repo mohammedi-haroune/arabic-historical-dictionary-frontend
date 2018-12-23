@@ -31,16 +31,11 @@
         @change="getDocuments"
         multiple
       >
-        <v-list-tile
-          v-if="periods.length > 0"
-          slot="prepend-item"
-          ripple
-          @click="togglePeriods"
-        >
+        <v-list-tile v-if="periods.length > 0" slot="prepend-item" ripple @click="togglePeriods">
           <v-list-tile-action>
             <v-icon :color="selectedPeriods.length > 0 ? 'indigo darken-4' : ''">{{ iconPeriods }}</v-icon>
           </v-list-tile-action>
-          <v-list-tile-title> Select All</v-list-tile-title>
+          <v-list-tile-title>Select All</v-list-tile-title>
         </v-list-tile>
       </v-select>
     </v-flex>
@@ -65,15 +60,21 @@
           @click="toggleCategories"
         >
           <v-list-tile-action>
-            <v-icon :color="selectedCategories.length > 0 ? 'indigo darken-4' : ''">{{ iconCategories }}</v-icon>
+            <v-icon
+              :color="selectedCategories.length > 0 ? 'indigo darken-4' : ''"
+            >{{ iconCategories }}</v-icon>
           </v-list-tile-action>
-          <v-list-tile-title> Select All</v-list-tile-title>
+          <v-list-tile-title>Select All</v-list-tile-title>
         </v-list-tile>
       </v-select>
     </v-flex>
     <v-flex mx-4 xs12>
-      <v-text-field v-model="query" solo :label="$t('message.search')" @input="getDocuments"
-                    prepend-icon="search"
+      <v-text-field
+        v-model="query"
+        solo
+        :label="$t('message.search')"
+        @input="getDocuments"
+        prepend-icon="search"
       ></v-text-field>
     </v-flex>
     <v-flex xs10 text-xs-center>
@@ -83,15 +84,11 @@
         @input="getDocuments"
         v-model="page"
         :length="num_pages"
+        circle
       ></v-pagination>
     </v-flex>
     <v-flex pa-5 ma-5 xs10 text-xs-center v-if="loading">
-      <v-progress-circular
-        :size="70"
-        :width="7"
-        color="primary"
-        indeterminate
-      ></v-progress-circular>
+      <v-progress-circular :size="70" :width="7" color="primary" indeterminate></v-progress-circular>
     </v-flex>
 
     <template v-else-if="documents.length > 0" v-for="doc in documents">
@@ -101,12 +98,7 @@
     </template>
 
     <v-flex v-else ma-4 xs12>
-        <v-alert
-          :value="true"
-          type="warning"
-        >
-          {{ $t('message.not_found') }}
-        </v-alert>
+      <v-alert :value="true" type="warning">{{ $t('message.not_found') }}</v-alert>
     </v-flex>
     <v-flex xs10 text-xs-center>
       <v-pagination
@@ -115,85 +107,101 @@
         @input="getDocuments"
         v-model="page"
         :length="num_pages"
+        circle
       ></v-pagination>
     </v-flex>
   </v-layout>
 </template>
 
 <script>
-import DocumentSample from '../components/DocumentSample'
-import $backend from '../backend'
-import { mapState } from 'vuex'
+import DocumentSample from "../components/DocumentSample";
+import $backend from "../backend";
+import { mapState } from "vuex";
 
 export default {
   components: { DocumentSample },
-  data () {
+  data() {
     return {
       documents: [],
       selectedPeriods: [],
       selectedCategories: [],
-      query: '',
+      query: "",
       page: 1,
       loading: false,
       num_pages: 0
-    }
+    };
   },
-  mounted () {
-    this.getDocuments()
+  mounted() {
+    this.getDocuments();
   },
   methods: {
-    async getDocuments () {
-      this.loading = true
-      const docs = await $backend.$fetchDocuments(this.selectedPeriods, this.selectedCategories, this.query, this.page)
-      this.documents = docs.results
-      this.num_pages = Math.round(docs.count / 12)
-      this.loading = false
+    async getDocuments() {
+      this.loading = true;
+      const docs = await $backend.$fetchDocuments(
+        this.selectedPeriods,
+        this.selectedCategories,
+        this.query,
+        this.page
+      );
+      this.documents = docs.results;
+      this.num_pages = Math.round(docs.count / 12);
+      this.loading = false;
     },
-    togglePeriods () {
+    togglePeriods() {
       this.$nextTick(() => {
         if (this.likesAllPeriods) {
-          this.selectedPeriods = []
+          this.selectedPeriods = [];
         } else {
-          this.selectedPeriods = this.periods.map(p => p.id).slice()
+          this.selectedPeriods = this.periods.map(p => p.id).slice();
         }
-        this.getDocuments()
-      })
+        this.getDocuments();
+      });
     },
-    toggleCategories () {
+    toggleCategories() {
       this.$nextTick(() => {
         if (this.likesAllCategories) {
-          this.selectedCategories = []
+          this.selectedCategories = [];
         } else {
-          this.selectedCategories = this.categories.slice()
+          this.selectedCategories = this.categories.slice();
         }
-        this.getDocuments()
-      })
+        this.getDocuments();
+      });
     }
   },
   computed: {
-    likesAllPeriods () {
-      return this.selectedPeriods.length === this.periods.length
+    likesAllPeriods() {
+      return this.selectedPeriods.length === this.periods.length;
     },
-    likesSomePeriods () {
-      return this.selectedPeriods.length > 0 && !this.likesAllPeriods
+    likesSomePeriods() {
+      return this.selectedPeriods.length > 0 && !this.likesAllPeriods;
     },
-    iconPeriods () {
-      if (this.likesAllPeriods) return 'mdi-close-box'
-      if (this.likesSomePeriods) return 'mdi-minus-box'
-      return 'mdi-checkbox-blank-outline'
+    iconPeriods() {
+      if (this.likesAllPeriods) return "mdi-close-box";
+      if (this.likesSomePeriods) return "mdi-minus-box";
+      return "mdi-checkbox-blank-outline";
     },
-    likesAllCategories () {
-      return this.selectedCategories.length === this.categories.length
+    likesAllCategories() {
+      return this.selectedCategories.length === this.categories.length;
     },
-    likesSomeCategories () {
-      return this.selectedCategories.length > 0 && !this.likesAllCategories
+    likesSomeCategories() {
+      return this.selectedCategories.length > 0 && !this.likesAllCategories;
     },
-    iconCategories () {
-      if (this.likesAllCategories) return 'mdi-close-box'
-      if (this.likesSomeCategories) return 'mdi-minus-box'
-      return 'mdi-checkbox-blank-outline'
+    iconCategories() {
+      if (this.likesAllCategories) return "mdi-close-box";
+      if (this.likesSomeCategories) return "mdi-minus-box";
+      return "mdi-checkbox-blank-outline";
     },
-    ...mapState(['periods', 'categories'])
+    ...mapState(["periods", "categories"])
   }
-}
+};
 </script>
+
+<style>
+.v-card {
+  border-radius: 8px;
+}
+
+.v-input .v-input__slot {
+  border-radius: 50px;
+}
+</style>

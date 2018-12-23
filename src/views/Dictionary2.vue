@@ -23,7 +23,11 @@
               <v-icon color="red">close</v-icon>
             </v-btn>
           </v-toolbar>
-          <new-entry :page="page" :term_to_insert="selected_term" :meaning_to_insert="selected_meaning"></new-entry>
+          <new-entry
+            :page="page"
+            :term_to_insert="selected_term"
+            :meaning_to_insert="selected_meaning"
+          ></new-entry>
         </v-card>
       </v-dialog>
       <v-dialog v-if="dialog_history" lazy v-model="dialog_history">
@@ -63,16 +67,11 @@
           @change="fetchEntries()"
           multiple
         >
-          <v-list-tile
-            v-if="periods.length > 0"
-            slot="prepend-item"
-            ripple
-            @click="togglePeriods"
-          >
+          <v-list-tile v-if="periods.length > 0" slot="prepend-item" ripple @click="togglePeriods">
             <v-list-tile-action>
               <v-icon :color="selectedPeriods.length > 0 ? 'indigo darken-4' : ''">{{ iconPeriods }}</v-icon>
             </v-list-tile-action>
-            <v-list-tile-title> Select All</v-list-tile-title>
+            <v-list-tile-title>Select All</v-list-tile-title>
           </v-list-tile>
         </v-select>
       </v-flex>
@@ -98,53 +97,49 @@
             @click="toggleCategories"
           >
             <v-list-tile-action>
-              <v-icon :color="selectedCategories.length > 0 ? 'indigo darken-4' : ''">{{ iconCategories }}</v-icon>
+              <v-icon
+                :color="selectedCategories.length > 0 ? 'indigo darken-4' : ''"
+              >{{ iconCategories }}</v-icon>
             </v-list-tile-action>
-            <v-list-tile-title> Select All</v-list-tile-title>
+            <v-list-tile-title>Select All</v-list-tile-title>
           </v-list-tile>
         </v-select>
       </v-flex>
       <v-flex mx-4 xs12>
-        <v-text-field v-model="query" solo :label="$t('message.search')" @input="fetchEntries()"
-                      prepend-icon="search"
+        <v-text-field
+          v-model="query"
+          solo
+          :label="$t('message.search')"
+          @input="fetchEntries()"
+          prepend-icon="search"
         ></v-text-field>
       </v-flex>
     </v-layout>
     <v-layout>
-    <v-flex text-xs-center>
+      <v-flex text-xs-center>
         <v-pagination
           v-if="num_pages > 0"
           @input="fetchEntries"
           total-visible="15"
           v-model="page"
           :length="num_pages"
+          circle
         ></v-pagination>
       </v-flex>
     </v-layout>
-    <v-layout  v-if="loading">
+    <v-layout v-if="loading">
       <v-flex pa-5 ma-5 xs10 text-xs-center>
-        <v-progress-circular
-          :size="70"
-          :width="7"
-          color="primary"
-          indeterminate
-        ></v-progress-circular>
+        <v-progress-circular :size="70" :width="7" color="primary" indeterminate></v-progress-circular>
       </v-flex>
     </v-layout>
     <v-layout v-else-if="items.length > 0">
       <v-flex xs12>
         <ol>
-          <li
-            v-for="item in items"
-            :key="item.id"
-          >
+          <li v-for="item in items" :key="item.id">
             {{ item.term }}
             <v-flex v-if="item.meaning_set.length" pr-4 pa-2>
               <ul>
-                <li
-                  v-for="meaning in item.meaning_set"
-                  :key="meaning.id"
-                >
+                <li v-for="meaning in item.meaning_set" :key="meaning.id">
                   {{ meaning.posTag ? meaning.posTag + ' : ' : '' }} {{ meaning.text }}
                   <v-btn icon @click="add(item.term, meaning)">
                     <v-icon>add</v-icon>
@@ -161,128 +156,124 @@
     </v-layout>
     <v-layout v-else>
       <v-flex xs12>
-        <v-alert
-          :value="true"
-          type="warning"
-        >
-          {{ $t('message.not_found') }}
-        </v-alert>
+        <v-alert :value="true" type="warning">{{ $t('message.not_found') }}</v-alert>
       </v-flex>
     </v-layout>
   </v-container>
 </template>
 
 <script>
-import $backend from '../backend'
-import NewEntry from '../components/NewEntry'
-import History from '../components/History'
-import { mapState } from 'vuex'
+import $backend from "../backend";
+import NewEntry from "../components/NewEntry";
+import History from "../components/History";
+import { mapState } from "vuex";
 
 export default {
-  name: 'Dictionary2',
+  name: "Dictionary2",
   components: { History, NewEntry },
-  data () {
+  data() {
     return {
       id: 2,
       page: 1,
-      query: '',
+      query: "",
       num_pages: 0,
-      title: 'كل الكلمات المتوفرة',
+      title: "كل الكلمات المتوفرة",
       items: [],
       dialog_add: false,
-      selected_term: '',
-      selected_meaning: '',
-      selected_meaning_id: '',
+      selected_term: "",
+      selected_meaning: "",
+      selected_meaning_id: "",
       dialog_history: false,
       selectedPeriods: [],
       selectedCategories: [],
       clicked: false,
       loading: false
-    }
+    };
   },
-  mounted () {
-    this.fetchEntries()
+  mounted() {
+    this.fetchEntries();
   },
   methods: {
-    async fetchEntries () {
-      this.loading = true
-      return $backend.$getEntrySet(this.query, this.page)
+    async fetchEntries() {
+      this.loading = true;
+      return $backend
+        .$getEntrySet(this.query, this.page)
         .then(response => {
-          const set = response.results
-          this.items.length = 0
-          this.items.push(...set)
-          this.num_pages = Math.round(response.count / 12)
-          this.loading = false
+          const set = response.results;
+          this.items.length = 0;
+          this.items.push(...set);
+          this.num_pages = Math.round(response.count / 12);
+          this.loading = false;
         })
-        .catch(err => console.warn(err))
+        .catch(err => console.warn(err));
     },
-    async getMeaning (id) {
-      const meaning = await $backend.$getMeaning(id)
-      return meaning
+    async getMeaning(id) {
+      const meaning = await $backend.$getMeaning(id);
+      return meaning;
     },
-    add (term, meaning) {
-      console.log('term', term)
-      this.selected_term = term
-      this.selected_meaning = meaning
-      console.log('selected_term', this.selected_term)
-      console.log('selected_meaning', this.selected_meaning)
-      this.dialog_add = true
+    add(term, meaning) {
+      console.log("term", term);
+      this.selected_term = term;
+      this.selected_meaning = meaning;
+      console.log("selected_term", this.selected_term);
+      console.log("selected_meaning", this.selected_meaning);
+      this.dialog_add = true;
     },
-    history (id) {
-      console.log('meaning_id', id)
-      this.selected_meaning_id = id
-      this.dialog_history = true
+    history(id) {
+      console.log("meaning_id", id);
+      this.selected_meaning_id = id;
+      this.dialog_history = true;
     },
-    togglePeriods () {
+    togglePeriods() {
       this.$nextTick(() => {
         if (this.likesAllPeriods) {
-          this.selectedPeriods = []
+          this.selectedPeriods = [];
         } else {
-          this.selectedPeriods = this.periods.map(p => p.id).slice()
+          this.selectedPeriods = this.periods.map(p => p.id).slice();
         }
-        this.fetchEntries()
-      })
+        this.fetchEntries();
+      });
     },
-    toggleCategories () {
+    toggleCategories() {
       this.$nextTick(() => {
         if (this.likesAllCategories) {
-          this.selectedCategories = []
+          this.selectedCategories = [];
         } else {
-          this.selectedCategories = this.categories.slice()
+          this.selectedCategories = this.categories.slice();
         }
-        this.fetchEntries()
-      })
+        this.fetchEntries();
+      });
     }
   },
   computed: {
-    likesAllPeriods () {
-      return this.selectedPeriods.length === this.periods.length
+    likesAllPeriods() {
+      return this.selectedPeriods.length === this.periods.length;
     },
-    likesSomePeriods () {
-      return this.selectedPeriods.length > 0 && !this.likesAllPeriods
+    likesSomePeriods() {
+      return this.selectedPeriods.length > 0 && !this.likesAllPeriods;
     },
-    iconPeriods () {
-      if (this.likesAllPeriods) return 'mdi-close-box'
-      if (this.likesSomePeriods) return 'mdi-minus-box'
-      return 'mdi-checkbox-blank-outline'
+    iconPeriods() {
+      if (this.likesAllPeriods) return "mdi-close-box";
+      if (this.likesSomePeriods) return "mdi-minus-box";
+      return "mdi-checkbox-blank-outline";
     },
-    likesAllCategories () {
-      return this.selectedCategories.length === this.categories.length
+    likesAllCategories() {
+      return this.selectedCategories.length === this.categories.length;
     },
-    likesSomeCategories () {
-      return this.selectedCategories.length > 0 && !this.likesAllCategories
+    likesSomeCategories() {
+      return this.selectedCategories.length > 0 && !this.likesAllCategories;
     },
-    iconCategories () {
-      if (this.likesAllCategories) return 'mdi-close-box'
-      if (this.likesSomeCategories) return 'mdi-minus-box'
-      return 'mdi-checkbox-blank-outline'
+    iconCategories() {
+      if (this.likesAllCategories) return "mdi-close-box";
+      if (this.likesSomeCategories) return "mdi-minus-box";
+      return "mdi-checkbox-blank-outline";
     },
-    ...mapState(['periods', 'categories'])
+    ...mapState(["periods", "categories"])
   },
   watch: {
-    query (val) {
-      this.page = 1
+    query(val) {
+      this.page = 1;
     }
   }
-}
+};
 </script>
