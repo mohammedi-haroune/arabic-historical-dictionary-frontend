@@ -58,8 +58,8 @@
       </transition>
     </v-layout>
     <v-layout>
-      <v-dialog lazy v-model="dialog" v-if="dialog">
-        <v-card v-scroll="scrolling">
+      <v-dialog scrollable lazy v-model="dialog" v-if="dialog">
+        <v-card>
           <v-toolbar>
             <v-icon>mdi-cursor-text</v-icon>
             <v-toolbar-title>{{ $t('message.example.add') }}</v-toolbar-title>
@@ -68,7 +68,11 @@
               <v-icon color="red">close</v-icon>
             </v-btn>
           </v-toolbar>
-          <new-entry :example_to_insert="selected_example"></new-entry>
+          <v-card-text>
+            <new-entry
+              :example_to_insert="selected_example"
+            ></new-entry>
+          </v-card-text>
         </v-card>
       </v-dialog>
     </v-layout>
@@ -120,7 +124,11 @@ export default {
       doc: null,
       sents: [],
       fab: false,
-      selected: "",
+      selected: {
+        position: -1,
+        sentence: '',
+        document: -1
+      },
       dialog: false,
       loading: false,
       loading_sents: false,
@@ -130,7 +138,7 @@ export default {
     };
   },
   computed: {
-    items: function() {
+    items: function () {
       return [
         {
           title: "message.name",
@@ -155,12 +163,13 @@ export default {
         documents: [this.doc],
         document: this.doc.id,
         sents: [this.selected],
-        sentence: this.selected,
+        sentences: [0],
+        sentence: '',
         periods: [this.doc.period],
         period: this.doc.period.id,
         categories: [this.doc.category],
         category: this.doc.category,
-        confirmed: false
+        confirmed: true
       }
     },
     more_pages () {
@@ -179,7 +188,7 @@ export default {
         this.fetchSentences();
       }
     },
-    async fetchSentences() {
+    async fetchSentences () {
       this.loading_sents = true;
       this.loaded_pages = this.loaded_pages + 1;
       const res = await $backend.$getSentences(this.id, this.loaded_pages);
@@ -214,7 +223,8 @@ export default {
         this.fab = false;
       }
       self.selected = {
-        id: id,
+        position: id,
+        document: self.doc.id,
         sentence: text.trim()
       };
       console.log("selected", self.selected);
