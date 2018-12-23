@@ -97,7 +97,7 @@
             <v-flex v-if="loading_sents" ma-5 xs10 text-xs-center>
               <v-progress-circular :size="50" :width="5" color="primary" indeterminate></v-progress-circular>
             </v-flex>
-            <v-flex v-else-if="this.pages > this.loaded_pages" xs-text-center xs10>
+            <v-flex v-else-if="more_pages" xs-text-center xs10>
               <v-btn @click="fetchSentences">{{ $t('message.more') }}</v-btn>
             </v-flex>
           </v-card-text>
@@ -148,7 +148,7 @@ export default {
           value: this.doc.category
         },
         { title: "message.author", icon: "edit", value: this.doc.author }
-      ];
+      ]
     },
     selected_example: function() {
       return {
@@ -161,7 +161,10 @@ export default {
         categories: [this.doc.category],
         category: this.doc.category,
         confirmed: false
-      };
+      }
+    },
+    more_pages () {
+      return this.pages > this.loaded_pages
     }
   },
   created() {
@@ -180,7 +183,7 @@ export default {
       this.loading_sents = true;
       this.loaded_pages = this.loaded_pages + 1;
       const res = await $backend.$getSentences(this.id, this.loaded_pages);
-      this.pages = res.count / 12;
+      this.pages = Math.floor(res.count / 12);
       this.sents = this.sents.concat(res.results);
       this.loading_sents = false;
     },
