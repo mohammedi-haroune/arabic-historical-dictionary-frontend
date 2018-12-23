@@ -22,7 +22,7 @@
       <v-list>
         <v-list-tile router :to="item.to" :key="i" v-for="(item, i) in items" exact>
           <v-list-tile-action>
-            <v-icon v-html="item.icon"></v-icon>
+            <v-icon :color="colors[i]" v-html="item.icon"></v-icon>
           </v-list-tile-action>
           <v-list-tile-content>
             <v-list-tile-title v-text="item.title"></v-list-tile-title>
@@ -76,6 +76,15 @@
 export default {
   data() {
     return {
+      colors: [
+        "cyan lighten-1",
+        "purple lighten-2",
+        "amber lighten-1",
+        "cyan lighten-1",
+        "red lighten-1",
+        "green lighten-1",
+        "blue lighten-1"
+      ],
       items: [
         { icon: "apps", title: this.$t("message.welcome"), to: "/welcome" },
         { icon: "create", title: this.$t("message.corpus"), to: "/corpus" },
