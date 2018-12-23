@@ -76,12 +76,12 @@
         </v-card>
       </v-dialog>
     </v-layout>
-    <v-layout>
+    <v-layout align-center justify-space-between row fill-height>
       <v-flex v-if="loading" pa-5 ma-5 xs10 text-xs-center>
         <v-progress-circular :size="70" :width="7" color="primary" indeterminate></v-progress-circular>
       </v-flex>
       <v-hover>
-        <v-card slot-scope="{ hover }" :class="`elevation-${hover ? 15 : 1}`">
+        <v-card slot-scope="{ hover }" :class="`elevation-${hover ? 15 : 1}`" width="100%">
           <v-card-title primary-title class="primary white--text">
             <v-flex v-for="item in items" :key="item.title">
               <p class="title" :key="item.title">
