@@ -132,7 +132,7 @@
         <v-progress-circular :size="70" :width="7" color="primary" indeterminate></v-progress-circular>
       </v-flex>
     </v-layout>
-    <v-layout v-else-if="items.length > 0">
+    <!-- <v-layout v-else-if="items.length > 0">
       <v-flex xs12>
         <ol>
           <li v-for="item in items" :key="item.id">
@@ -152,6 +152,30 @@
             </v-flex>
           </li>
         </ol>
+      </v-flex>
+    </v-layout> -->
+    <v-layout v-else-if="items.length > 0">
+      <v-flex pa-4 xs12>
+        <v-treeview
+          :items="items"
+          item-children="meaning_set"
+          item-key="id"
+          item-text="term"
+          open-on-click
+          open-all
+          on-icon="fa fa-cubes"
+          off-icon="fa fa-cubes"
+          indeterminate-icon="fa fa-cubes"
+        >
+          <template slot="prepend" slot-scope="{ item, open, leaf }">
+            <v-btn v-if="leaf" icon @click="add(term_from_meaning(item.id), item)">
+              <v-icon>add</v-icon>
+            </v-btn>
+            <v-btn v-if="leaf && item.is_appears" icon @click="history(item.id)">
+              <v-icon>fa fa-info</v-icon>
+            </v-btn>
+          </template>
+        </v-treeview>
       </v-flex>
     </v-layout>
     <v-layout v-else>
@@ -199,7 +223,13 @@ export default {
       return $backend
         .$getEntrySet(this.query, this.page)
         .then(response => {
-          const set = response.results;
+          const set = response.results.map(o => {
+            o.meaning_set = o.meaning_set.map(meaning => {
+              meaning.term = (meaning.posTag ? meaning.posTag + ' : ' : '') + meaning.text
+              return meaning
+            })
+            return o
+          })
           this.items.length = 0;
           this.items.push(...set);
           this.num_pages = Math.round(response.count / 12);
@@ -243,6 +273,9 @@ export default {
         }
         this.fetchEntries();
       });
+    },
+    term_from_meaning (id) {
+      return this.items.filter(item => item.meaning_set.map(m => m.id).includes(id))[0].term
     }
   },
   computed: {
