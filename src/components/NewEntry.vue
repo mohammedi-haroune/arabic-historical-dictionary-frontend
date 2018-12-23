@@ -19,6 +19,8 @@
         confirmed: "مؤكد"
         created: "سبيل المصطلح تم إنشاؤها بنجاح"
         failure: "حدث خطأ عند إنشاء المصطلح"
+        select: "اختر بعض الجمل"
+        selected: "الجمل المختارة"
       clear: "إلغاء"
       submit: "التأكيد"
 </i18n>
@@ -27,20 +29,22 @@
     <v-snackbar
       v-model="success_snackbar"
       color="success"
-      :timeout="2000"
-      buttom
-      absolute
-      left
+      :timeout="5000"
+      top
+      :absolute="inserting_meaning || inserting_term || inserting_example"
+      center
+      closeable
     >
       {{ $t('message.example.created') }}
     </v-snackbar>
     <v-snackbar
       color="error"
-      :timeout="2000"
-      absolute
+      :timeout="5000"
       v-model="failure_snackbar"
-      buttom
-      left
+      :absolute="inserting_meaning || inserting_term || inserting_example"
+      top
+      center
+      closeable
     >
       {{ $t('message.example.failure') }}
     </v-snackbar>
@@ -129,7 +133,7 @@
               :disabled="inserting_example"
               v-model="example.period"
               :label="$t('message.example.period')"
-              :items="example.periods"
+              :items="periods"
               item-text="name"
               item-value="id"
               :rules="requiredRules"
@@ -143,28 +147,14 @@
               :disabled="inserting_example"
               v-model="example.category"
               :label="$t('message.example.category')"
-              :items="example.categories"
+              :items="categories"
               :rules="requiredRules"
               @input="filterDocuments(index)"
               required
             >
             </v-autocomplete>
           </v-flex>
-          <v-flex xs10 md4 pa-2>
-            <v-autocomplete
-              :disabled="inserting_example"
-              v-model="example.document"
-              :label="$t('message.example.document')"
-              :items="example.documents"
-              :rules="requiredRules"
-              @input="getSentences(index)"
-              item-value="id"
-              item-text="name"
-              required
-            >
-            </v-autocomplete>
-          </v-flex>
-          <v-flex  xs10 md8 pa-2>
+          <!--<v-flex xs8 md8 pa-2>
             <v-autocomplete
               :disabled="inserting_example"
               v-model="example.sentence"
@@ -177,21 +167,67 @@
               required
             >
             </v-autocomplete>
-          </v-flex>
-          <v-flex pa-2>
+          </v-flex>-->
+          <!--<v-flex xs1>
             <v-checkbox :label="$t('message.example.confirmed')">
               {{ $t('message.example.confirmed') }}
             </v-checkbox>
+          </v-flex>-->
+          <v-flex xs1>
+            <v-dialog v-model="dialog" scrollable max-width="600px" :disabled="example.sents.length === 0">
+              <v-btn icon slot="activator" :disabled="example.sents.length === 0">
+                <v-icon meduim>fa fa-list</v-icon>
+              </v-btn>
+              <v-card>
+                <v-toolbar>
+                  <v-icon>mdi-cursor-text</v-icon>
+                  <v-toolbar-title>{{ $t('message.example.select') }}</v-toolbar-title>
+                  <v-spacer></v-spacer>
+                  <v-btn icon @click="dialog = false">
+                    <v-icon color="red">close</v-icon>
+                  </v-btn>
+                </v-toolbar>
+                <v-card-text style="height: 400px;">
+                  <v-checkbox
+                    :key="i"
+                    v-for="(sent, i) in example.sents"
+                    v-model="example.sentences"
+                    :label="sent.sentence"
+                    :value="i"
+                    required
+                    return-object
+                  ></v-checkbox>
+                </v-card-text>
+              </v-card>
+            </v-dialog>
           </v-flex>
-          <v-flex v-if="!inserting_example" pa-2>
+          <v-flex xs1 v-if="!inserting_example">
             <v-btn icon>
               <v-icon meduim @click="deleteExample(index)">delete</v-icon>
             </v-btn>
           </v-flex>
-          <v-flex v-if="!inserting_example" pa-2>
+          <v-flex xs1 v-if="!inserting_example">
             <v-btn icon v-show="index === examples.length - 1">
               <v-icon meduim @click="addExample">add</v-icon>
             </v-btn>
+          </v-flex>
+          <v-flex xs12 pa-2 v-if="example.sentences.length > 0">
+            <v-card>
+              <v-toolbar>
+                <v-icon>mdi-cursor-text</v-icon>
+                <v-toolbar-title>{{ $t('message.example.selected') }}</v-toolbar-title>
+              </v-toolbar>
+              <v-card-text>
+                  <template v-for="(i, j) in example.sentences">
+                      <p :key="i" class="body-2" >
+                        <v-btn icon @click="example.sentences.splice(j, 1)">
+                          <v-icon color="red">close</v-icon>
+                        </v-btn>
+                        {{ example.sents[i].sentence }}
+                      </p>
+                  </template>
+              </v-card-text>
+            </v-card>
           </v-flex>
         </v-layout>
         <v-divider></v-divider>
@@ -214,8 +250,7 @@ export default {
   props: {
     example_to_insert: Object,
     term_to_insert: String,
-    meaning_to_insert: Object,
-    page: Number
+    meaning_to_insert: Object
   },
   data: () => ({
     valid: true,
@@ -227,6 +262,8 @@ export default {
     terms: [],
     success_snackbar: false,
     failure_snackbar: false,
+    dialog: false,
+    selected: [],
     term_tag: 'v-text-field'
   }),
   computed: {
@@ -244,6 +281,7 @@ export default {
   methods: {
     submit () {
       if (this.$refs.form.validate()) {
+        /*
         const examples = this.examples.map(example => ({
           'document': example.document,
           'sentence': example.sentence.sentence,
@@ -251,6 +289,22 @@ export default {
           'position': example.sentence.position,
           'word_position': example.sentence.sentence.indexOf(this.term)
         }))
+        */
+
+        const examples = this.examples.flatMap(example => {
+          console.log('example', example)
+          return example.sentences.map(index => example.sents[index]).map(sentence => {
+            console.log('sentence', sentence)
+            return {
+              'document': sentence.document,
+              'sentence': sentence.sentence,
+              'confirmed': true,
+              'position': sentence.position,
+              'word_position': sentence.sentence.indexOf(this.term)
+            }
+          })
+        })
+
         this.meanings[0]['appears_set'] = examples
         const self = this
         $backend.$createEntry(this.term, this.meanings, examples)
@@ -285,12 +339,13 @@ export default {
         documents: [],
         document: '',
         sents: [],
+        sentences: [],
         sentence: '',
-        periods: this.periods,
+        // periods: this.periods,
         period: '',
-        categories: this.categories,
+        // categories: this.categories,
         category: '',
-        confirmed: false
+        confirmed: true
       })
     },
     async filterDocuments (index) {
@@ -300,26 +355,39 @@ export default {
       const categories = []
       if (example['category']) categories.push(example['category'])
       const docs = await $backend.$fetchDocuments(periods, categories, '')
-      example['documents'] = docs.results
+      example.documents = docs.results
+      this.getSentences(index)
     },
     async getSentences (index) {
       const example = this.examples[index]
-      const res = await $backend.$getSentences(example['document'])
-      example['sents'] = res.results.map(o => {
-        o.sentence = o.sentence.join(' ')
-        return o
+      const documents = example.documents
+      example.sents.splice(0, example.sents.length)
+      example.sentences.splice(0, example.sentences.length)
+      documents.forEach(doc => {
+        $backend.$getSentences(doc.id)
+          .then(res => {
+            res.results.map(o => {
+              o.sentence = o.sentence.join(' ').substring(0, 60)
+              return o
+            }).forEach(o => example.sents.push(o))
+          })
       })
     },
     log (example) {
       console.log(example.sentence)
+    },
+    open_dialog (example) {
+      this.dialog = true
     }
   },
   mounted () {
     console.log('mounted !')
     if (this.inserting_example) {
       console.log('received example_to_insert: ', this.example_to_insert)
+      console.log('received example_to_insert.sentences[0]: ', this.example_to_insert.sents[0].sentence.split(' '))
       this.examples.push(this.example_to_insert)
-      this.terms = this.example_to_insert.sentence.sentence.split(' ')
+      this.terms = this.example_to_insert.sents[0].sentence.split(' ')
+      console.log('this.terms', this.terms)
       this.term_tag = 'v-autocomplete'
     } else {
       // ensure that at least one example is added
