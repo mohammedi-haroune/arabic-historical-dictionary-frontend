@@ -25,7 +25,18 @@
           </v-flex>
 
           <v-flex v-else-if="items.length > 0" xs12>
-            <v-list expand>
+            <v-treeview
+              :items="items"
+              item-children="meaning_set"
+              item-key="id"
+              item-text="term"
+              open-on-click
+              on-icon="fa fa-cubes"
+              off-icon="fa fa-cubes"
+              indeterminate-icon="fa fa-cubes"
+            >
+            </v-treeview>
+            <!--<v-list expand>
               <v-list-group v-for="item in items" v-model="item.active" :key="item.id" no-action>
                 <v-list-tile slot="activator">
                   <v-list-tile-content>
@@ -41,7 +52,7 @@
                   </v-list-tile-content>
                 </v-list-tile>
               </v-list-group>
-            </v-list>
+            </v-list>-->
             <!--<v-treeview
             :active.sync="active"
             :items="items"
@@ -115,7 +126,14 @@ export default {
       return $backend
         .$getEntrySet(this.query, this.page)
         .then(response => {
-          const set = response.results;
+          const set = response.results.map(o => {
+            o.meaning_set = o.meaning_set.map(meaning => {
+              return {
+                term: (meaning.posTag ? meaning.posTag + ' : ' : '') + meaning.text
+              }
+            })
+            return o
+          })
           this.items.length = 0;
           this.items.push(...set);
           this.num_pages = Math.round(response.count / 12);
