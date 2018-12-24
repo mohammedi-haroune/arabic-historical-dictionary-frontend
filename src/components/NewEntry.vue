@@ -56,7 +56,6 @@
           <component
             :disabled="inserting_term"
             v-model="term"
-            :counter="10"
             :label="$t('message.term')"
             :rules="requiredRules"
             :items="terms"
@@ -221,7 +220,7 @@
                   <template v-for="(i, j) in example.sentences">
                       <p :key="i" class="body-2" >
                         <v-btn icon @click="example.sentences.splice(j, 1)">
-                          <v-icon color="red">close</v-icon>
+                          <v-icon color="red">delete</v-icon>
                         </v-btn>
                         {{ example.sents[i].sentence }}
                       </p>
