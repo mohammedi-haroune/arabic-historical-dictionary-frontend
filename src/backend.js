@@ -50,7 +50,6 @@ $backend.$fetchWordAppears = (params) => $backend.get('meaning_appears/', { para
 $backend.$createEntry = (term, meanings) =>
   $backend.post('entries/', {
     term: term,
-    dictionary: 1,
     meaning_set: meanings
   })
 
