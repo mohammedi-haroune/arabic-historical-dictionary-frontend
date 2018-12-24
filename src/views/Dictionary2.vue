@@ -26,6 +26,7 @@
           <v-card-text>
           <new-entry
             :term_to_insert="selected_term"
+            :id_to_insert="selected_id"
             :meaning_to_insert="selected_meaning"
           ></new-entry>
           </v-card-text>
@@ -169,7 +170,7 @@
           indeterminate-icon="fa fa-cubes"
         >
           <template slot="prepend" slot-scope="{ item, open, leaf }">
-            <v-btn small color="success lighten-1" v-if="leaf" icon @click="add(term_from_meaning(item.id), item)">
+            <v-btn small color="success lighten-1" v-if="leaf" icon @click="add(term_id_from_meaning(item.id), term_from_meaning(item.id), item)">
               <v-icon>add</v-icon>
             </v-btn>
           </template>
@@ -211,6 +212,7 @@ export default {
       items: [],
       dialog_add: false,
       selected_term: "",
+      selected_id: "",
       selected_meaning: "",
       selected_meaning_id: "",
       dialog_history: false,
@@ -247,9 +249,10 @@ export default {
       const meaning = await $backend.$getMeaning(id);
       return meaning;
     },
-    add(term, meaning) {
+    add(id, term, meaning) {
       console.log("term", term);
       this.selected_term = term;
+      this.selected_id = id
       this.selected_meaning = meaning;
       console.log("selected_term", this.selected_term);
       console.log("selected_meaning", this.selected_meaning);
@@ -282,6 +285,9 @@ export default {
     },
     term_from_meaning (id) {
       return this.items.filter(item => item.meaning_set.map(m => m.id).includes(id))[0].term
+    },
+    term_id_from_meaning (id) {
+      return this.items.filter(item => item.meaning_set.map(m => m.id).includes(id))[0].id
     }
   },
   computed: {

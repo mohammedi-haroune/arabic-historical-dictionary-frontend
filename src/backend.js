@@ -47,10 +47,20 @@ $backend.$getSentences = (id, page = 1) => $backend.get('sentences/', { params: 
 $backend.$fetchAppears = (id) => $backend.get('meaning_appears/' + id)
 $backend.$fetchWordAppears = (params) => $backend.get('meaning_appears/', { params })
 
-$backend.$createEntry = (term, meanings) =>
-  $backend.post('entries/', {
-    term: term,
-    meaning_set: meanings
-  })
+$backend.$createEntry = (term, meanings, id) => {
+  if (typeof id === 'undefined') {
+    return $backend.post('entries/', {
+      term: term,
+      meaning_set: meanings
+    })
+  } else {
+    console.log('seding post request with id', id)
+    return $backend.post('entries/', {
+      id: id,
+      term: term,
+      meaning_set: meanings
+    })
+  }
+}
 
 export default $backend

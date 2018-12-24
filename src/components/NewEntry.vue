@@ -249,6 +249,7 @@ export default {
   props: {
     example_to_insert: Object,
     term_to_insert: String,
+    id_to_insert: Number,
     meaning_to_insert: Object
   },
   data: () => ({
@@ -271,6 +272,9 @@ export default {
     },
     inserting_term: function () {
       return typeof this.term_to_insert !== 'undefined'
+    },
+    inserting_id: function () {
+      return typeof this.id_to_insert !== 'undefined'
     },
     inserting_meaning: function () {
       return typeof this.meaning_to_insert !== 'undefined'
@@ -306,7 +310,7 @@ export default {
 
         this.meanings[0]['appears_set'] = examples
         const self = this
-        $backend.$createEntry(this.term, this.meanings, examples)
+        $backend.$createEntry(this.term, this.meanings, this.id_to_insert)
           .then(function (response) {
             console.log(response)
             self.success_snackbar = true
@@ -403,6 +407,9 @@ export default {
     } else {
       // ensure that at least one meaning is added
       this.addMeaning()
+    }
+    if (this.inserting_id) {
+      console.log('recevied id_to_insert', this.id_to_insert)
     }
   }
 }
