@@ -13,7 +13,7 @@
   <v-container>
     <v-layout>
       <!-- lazy here is required because otherwise selected_meaning and selected_term will be empty -->
-      <v-dialog v-if="dialog_add" lazy v-model="dialog_add">
+      <v-dialog scrollable v-if="dialog_add" lazy v-model="dialog_add">
         <v-card>
           <v-toolbar>
             <v-icon>mdi-cursor-text</v-icon>
@@ -23,14 +23,15 @@
               <v-icon color="red">close</v-icon>
             </v-btn>
           </v-toolbar>
+          <v-card-text>
           <new-entry
-            :page="page"
             :term_to_insert="selected_term"
             :meaning_to_insert="selected_meaning"
           ></new-entry>
+          </v-card-text>
         </v-card>
       </v-dialog>
-      <v-dialog v-if="dialog_history" lazy v-model="dialog_history">
+      <v-dialog scrollable v-if="dialog_history" lazy v-model="dialog_history">
         <v-card>
           <v-toolbar>
             <v-icon>mdi-cursor-text</v-icon>
