@@ -1,7 +1,7 @@
 <template>
   <v-layout>
     <v-flex text-xs-center>
-      <check-history :meaning_id="meaning_id"></check-history>
+      <check-history :meaning_id="$route.params.meaning_id"></check-history>
     </v-flex>
   </v-layout>
 </template>
