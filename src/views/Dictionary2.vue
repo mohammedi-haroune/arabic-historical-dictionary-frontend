@@ -168,15 +168,17 @@
           off-icon="fa fa-cubes"
           indeterminate-icon="fa fa-cubes"
         >
+          <template slot="prepend" slot-scope="{ item, open, leaf }">
+            <v-btn small color="success lighten-1" v-if="leaf" icon @click="add(term_from_meaning(item.id), item)">
+              <v-icon>add</v-icon>
+            </v-btn>
+          </template>
           <template slot="append" slot-scope="{ item, open, leaf }">
-            <v-btn color="info darken-2" v-if="leaf && item.is_appears" icon @click="history(item.id)">
+            <v-btn small color="info darken-2" v-if="leaf && item.is_appears" icon @click="history(item.id)">
               <v-icon>fa fa-info</v-icon>
             </v-btn>
-            <v-btn dark color="amber darken-3" v-if="leaf && item.is_appears" icon :to="'check/' + item.id">
+            <v-btn small dark color="amber darken-3" v-if="leaf && item.is_appears" icon :to="'check/' + item.id">
               <v-icon>edit</v-icon>
-            </v-btn>
-            <v-btn color="success lighten-1" v-if="leaf" icon @click="add(term_from_meaning(item.id), item)">
-              <v-icon>add</v-icon>
             </v-btn>
           </template>
         </v-treeview>
