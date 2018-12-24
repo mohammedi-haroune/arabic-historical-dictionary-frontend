@@ -13,6 +13,7 @@
       add_entry: "أضف مصلح"
       dict: "القاموس"
       hist_dict: "القاموس التاريخي"
+      check: "مراجعة الأمثلة"
       about: "من نحن ؟"
 </i18n>
 
@@ -83,7 +84,8 @@ export default {
         "cyan lighten-1",
         "red lighten-1",
         "green lighten-1",
-        "blue lighten-1"
+        "blue lighten-1",
+        "amber lighten-1"
       ],
       items: [
         { icon: "apps", title: this.$t("message.welcome"), to: "/welcome" },
@@ -99,6 +101,11 @@ export default {
           icon: "fa fa-book-open",
           title: this.$t("message.hist_dict"),
           to: "/dictionary2"
+        },
+        {
+          icon: "fa fa-bookmark",
+          title: this.$t("message.check"),
+          to: "/check"
         },
         {
           icon: "fa fa-info-circle",
