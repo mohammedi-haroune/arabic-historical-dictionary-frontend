@@ -4,8 +4,8 @@
       term: "المصطلح"
       dictionary: "القاموس"
       meaning:
-        header: "المعاني"
-        add: "أضف المعاني"
+        header: "المعنى"
+        add: "أضف المعنى"
         text: "النص"
         posTag: "نوع"
 
@@ -200,16 +200,16 @@
               </v-card>
             </v-dialog>
           </v-flex>
-          <v-flex xs1 v-if="!inserting_example">
+          <!--<v-flex xs1 v-if="!inserting_example">
             <v-btn icon>
               <v-icon meduim @click="deleteExample(index)">delete</v-icon>
             </v-btn>
-          </v-flex>
-          <v-flex xs1 v-if="!inserting_example">
+          </v-flex>-->
+          <!--<v-flex xs1 v-if="!inserting_example">
             <v-btn icon v-show="index === examples.length - 1">
               <v-icon meduim @click="addExample">add</v-icon>
             </v-btn>
-          </v-flex>
+          </v-flex>-->
           <v-flex xs12 pa-2 v-if="example.sentences.length > 0">
             <v-card>
               <v-toolbar>
