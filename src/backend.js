@@ -47,7 +47,9 @@ $backend.$getSentences = (id, page = 1) => $backend.get('sentences/', { params: 
 $backend.$fetchAppears = (id) => $backend.get('meaning_appears/' + id)
 $backend.$fetchWordAppears = (params) => $backend.get('meaning_appears/', { params })
 
-$backend.$getStatistics = (word_id) => $backend.get('statistics/word?id=' + word_id, { params: { raw: true } })
+$backend.$getStatisticsById = (word_id) => $backend.get('statistics/word?id=' + word_id, { params: { raw: true } })
+$backend.$getStatisticsByTerm = (word) => $backend.get('statistics/word?t=' + word, { params: { raw: true } })
+
 
 $backend.$createEntry = (term, meanings, examples) =>
   $backend.post('entries/', {
