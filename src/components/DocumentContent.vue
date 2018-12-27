@@ -191,7 +191,7 @@ export default {
     async fetchSentences () {
       this.loading_sents = true;
       this.loaded_pages = this.loaded_pages + 1;
-      const res = await $backend.$getSentences(this.id, this.loaded_pages);
+      const res = await $backend.$getDocumentSentences(this.id, this.loaded_pages);
       this.pages = Math.floor(res.count / 12);
       this.sents = this.sents.concat(res.results);
       this.loading_sents = false;
