@@ -4,10 +4,10 @@
       submit: "التأكيد"
       deleted: "الأمثلة الملغات"
       title: "تعديل الأمثلة"
+      error: "حدث خطأ عند إنشاء المصطلح"
 </i18n>
 <template>
-  <v-card>
-    <v-layout>
+    <div>
       <v-btn
         v-show="this.deleted.length > 0"
         @click.stop="dialog = !dialog"
@@ -43,12 +43,9 @@
           </v-card-text>
         </v-card>
       </v-dialog>
-    </v-layout>
-    <v-toolbar>
-      <v-icon>mdi-cursor-text</v-icon>
-      <v-toolbar-title>{{ $t('message.title') }}</v-toolbar-title>
-    </v-toolbar>
-    <v-card-text>
+      <v-alert :value="error" type="error" outline>{{ $t('message.error') }}</v-alert>
+      <v-progress-circular v-if="loading" :size="70" :width="7" color="primary" indeterminate></v-progress-circular>
+      <template v-else>
       <v-timeline>
         <template v-for="(period, i) in sorted_periods">
           <v-timeline-item
@@ -99,13 +96,11 @@
           </v-timeline-item>
         </template>
       </v-timeline>
-    </v-card-text>
-    <v-card-actions>
       <v-btn>
         {{ $t('message.submit') }}
       </v-btn>
-    </v-card-actions>
-  </v-card>
+      </template>
+    </div>
 </template>
 
 <script>
@@ -128,6 +123,8 @@ export default {
       appears_by_period: [],
       deleted: [],
       dialog: false,
+      loading: false,
+      error: false,
       colors: [
         'cyan lighten-1',
         'purple lighten-2',
@@ -160,6 +157,8 @@ export default {
   },
   methods: {
     async fetchAppears () {
+      this.loading = true
+      this.error = false
       console.log('fetch for ', this.meaning_id)
       $bakcend.$fetchAppears(this.meaning_id).then(results => {
         console.log(results)
@@ -170,6 +169,7 @@ export default {
           }
           this.appears_by_period[appear.period_id].push(appear)
         })
+        this.loading = false
         /* results.appears_set.forEach(appear => {
               if (typeof this.appears_set[appear.period_id] === 'undefined') {
                 this.appears_set[appear.period_id] = [appear.sentence]
