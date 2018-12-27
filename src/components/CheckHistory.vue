@@ -177,7 +177,7 @@ export default {
                 this.appears_set[appear.period_id].push(appear.sentence)
               }
             }) */
-      })
+      }).catch(err => this.error = true)
     },
     appears_for (id) {
       return this.appears_set
