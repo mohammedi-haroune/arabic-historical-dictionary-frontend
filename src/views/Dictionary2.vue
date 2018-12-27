@@ -43,9 +43,28 @@
             </v-btn>
           </v-toolbar>
           <v-card-text>
-            <v-layout>
-              <v-flex>
+            <v-layout align-center justify-center row fill-height>
+              <v-flex text-xs-center>
                 <history :meaning_id="selected_meaning_id"></history>
+              </v-flex>
+            </v-layout>
+          </v-card-text>
+        </v-card>
+      </v-dialog>
+      <v-dialog scrollable v-if="dialog_check_history" lazy v-model="dialog_check_history">
+        <v-card>
+          <v-toolbar>
+            <v-icon>mdi-cursor-text</v-icon>
+            <v-toolbar-title>{{ $t('message.term.history') }}</v-toolbar-title>
+            <v-spacer></v-spacer>
+            <v-btn icon @click="dialog_check_history = false">
+              <v-icon color="red">close</v-icon>
+            </v-btn>
+          </v-toolbar>
+          <v-card-text>
+            <v-layout align-center justify-center row fill-height>
+              <v-flex text-xs-center>
+                <check-history :meaning_id="selected_meaning_id"></check-history>
               </v-flex>
             </v-layout>
           </v-card-text>
@@ -178,7 +197,7 @@
             <v-btn small color="info darken-2" v-if="leaf && item.is_appears" icon @click="history(item.id)">
               <v-icon>fa fa-info</v-icon>
             </v-btn>
-            <v-btn small dark color="amber darken-3" v-if="leaf && item.is_appears" icon :to="'check/' + item.id">
+            <v-btn small dark color="amber darken-3" v-if="leaf && item.is_appears" icon @click="checkHistory(item.id)">
               <v-icon>edit</v-icon>
             </v-btn>
           </template>
@@ -198,10 +217,11 @@ import $backend from "../backend";
 import NewEntry from "../components/NewEntry";
 import History from "../components/History";
 import { mapState } from "vuex";
+import CheckHistory from '../components/CheckHistory'
 
 export default {
   name: "Dictionary2",
-  components: { History, NewEntry },
+  components: { CheckHistory, History, NewEntry },
   data() {
     return {
       id: 2,
@@ -216,6 +236,7 @@ export default {
       selected_meaning: "",
       selected_meaning_id: "",
       dialog_history: false,
+      dialog_check_history: false,
       selectedPeriods: [],
       selectedCategories: [],
       clicked: false,
@@ -262,6 +283,11 @@ export default {
       console.log("meaning_id", id);
       this.selected_meaning_id = id;
       this.dialog_history = true;
+    },
+    checkHistory(id) {
+      console.log("meaning_id", id);
+      this.selected_meaning_id = id;
+      this.dialog_check_history = true;
     },
     togglePeriods() {
       this.$nextTick(() => {
