@@ -8,18 +8,6 @@
 </i18n>
 <template>
     <div>
-      <v-btn
-        v-show="this.deleted.length > 0"
-        @click.stop="dialog = !dialog"
-        left
-        bottom
-        dark
-        fixed
-        fab
-        color="red"
-      >
-        <v-icon>delete</v-icon>
-      </v-btn>
       <v-dialog v-model="dialog" scrollable max-width="600px">
         <v-card>
           <v-toolbar>
@@ -96,6 +84,22 @@
           </v-timeline-item>
         </template>
       </v-timeline>
+        <div style="position: relative">
+          <v-fab-transition>
+            <v-btn
+              v-show="this.deleted.length > 0"
+              @click.stop="dialog = !dialog"
+              left
+              bottom
+              absolute
+              dark
+              fab
+              color="red"
+            >
+              <v-icon>delete</v-icon>
+            </v-btn>
+          </v-fab-transition>
+        </div>
       <v-btn>
         {{ $t('message.submit') }}
       </v-btn>
