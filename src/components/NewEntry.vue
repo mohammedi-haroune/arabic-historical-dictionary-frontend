@@ -23,6 +23,7 @@
         selected: "الجمل المختارة"
       clear: "إلغاء"
       submit: "التأكيد"
+      no_hist_example: "لا يوجد أية أمثلة تاريخية"
 </i18n>
 <template>
   <v-form ref="form" v-model="valid">
@@ -64,6 +65,9 @@
             @input="filterPeriodsAndCategoriesCouples()"
           ></component>
         </v-flex>
+        <v-flex md5 pa-2>
+          <v-alert v-if="no_hist_example" :value="no_hist_example" type="warning" outline>{{ $t('message.no_hist_example') }}</v-alert>
+        </v-flex>
       </v-layout>
     </v-container>
     <v-container>
@@ -87,6 +91,7 @@
             v-model="meaning.posTag"
             :label="$t('message.meaning.posTag')"
             :items="postags"
+            @input="this.submitted = false"
             clearable
           >
           </v-autocomplete>
@@ -97,6 +102,7 @@
             v-model="meaning.text"
             :label="$t('message.meaning.text')"
             :rules="requiredRules"
+            @input="this.submitted = false"
             required
             clearable
           >
@@ -256,6 +262,7 @@ export default {
   data: () => ({
     valid: true,
     loading_submit: false,
+    loading: false,
     submitted: false,
     requiredRules: [v => !!v || 'This field is required'],
     term: '',
@@ -284,6 +291,9 @@ export default {
     inserting_meaning: function () {
       return typeof this.meaning_to_insert !== 'undefined'
     },
+    no_hist_example: function () {
+      return this.term && !this.loading && this.term_categories().length === 0 && this.term_periods().length === 0
+    },
     ...mapState(['postags', 'dictionaries', 'periods', 'categories'])
   },
   methods: {
@@ -308,10 +318,10 @@ export default {
           .then(function (response) {
             self.success_snackbar = true
             self.submitted = true
-            self.loading_submit = true
+            self.loading_submit = false
           })
           .catch(function (error) {
-            self.loading_submit = true
+            self.loading_submit = false
             self.failure_snackbar = true
           })
       }
@@ -347,6 +357,8 @@ export default {
       })
     },
     async getSentences (index) {
+      // if period or category is changed, allow submitting the form
+      this.submitted = false
       const example = this.examples[index]
       example.sents = []
       example.sentences = []
@@ -408,6 +420,8 @@ export default {
       example.loading_sents = false
     },
     async filterPeriodsAndCategoriesCouples (index) {
+      // if term is changed, allow submitting the form
+      this.submitted = false
       const params = { t: this.term }
       const example = this.examples[index]
       if (typeof example !== 'undefined') {
@@ -431,8 +445,11 @@ export default {
           }
         })
       }
+      this.loading = true
       const result = await $backend.$getPeriodsAndCategories(params)
-      // if true, means a specific example is being updated, otherwise all examples are updated
+      this.loading = false
+      this.periodToCategories = {}
+      this.categoryToPeriods = {}
       console.log('result', result)
       result.forEach((couple) => {
         const period = couple[0]
@@ -449,6 +466,7 @@ export default {
       result.eras = result.map(el => el[0])
       result.categories = result.map(el => el[1])
 
+      // if true, means a specific example is being updated, otherwise all examples are updated
       if (typeof example !== 'undefined') {
         if (example.period === '') {
           example.periods = result.eras
@@ -500,7 +518,7 @@ export default {
       this.term = this.term_to_insert
 
       // ensure periods and categories are filtered if the term is initialized when inserting a term from the dictionary
-      this.filterPeriodsAndCategories()
+      this.filterPeriodsAndCategoriesCouples()
     }
     if (this.inserting_meaning) {
       this.meanings = [ this.meaning_to_insert ]
