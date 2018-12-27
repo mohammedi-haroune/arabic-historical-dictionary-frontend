@@ -98,7 +98,7 @@
     </template>
 
     <v-flex v-else ma-4 xs12>
-      <v-alert :value="true" type="warning">{{ $t('message.not_found') }}</v-alert>
+      <v-alert :value="true" type="error" outline>{{ $t('message.not_found') }}</v-alert>
     </v-flex>
     <v-flex xs10 text-xs-center>
       <v-pagination

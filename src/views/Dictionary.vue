@@ -76,7 +76,7 @@
             </v-treeview>-->
           </v-flex>
           <v-flex v-else xs12>
-            <v-alert :value="true" type="warning">{{ $t('message.not_found') }}</v-alert>
+            <v-alert :value="true" type="error" outline>{{ $t('message.not_found') }}</v-alert>
           </v-flex>
         </v-layout>
         <v-card-actions>

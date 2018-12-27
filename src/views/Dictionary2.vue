@@ -186,8 +186,8 @@
       </v-flex>
     </v-layout>
     <v-layout v-else>
-      <v-flex xs12>
-        <v-alert :value="true" type="warning">{{ $t('message.not_found') }}</v-alert>
+      <v-flex xs12 text-xs-center>
+        <v-alert :value="true" type="error" outline>{{ $t('message.not_found') }}</v-alert>
       </v-flex>
     </v-layout>
   </v-container>
