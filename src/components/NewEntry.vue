@@ -348,17 +348,17 @@ export default {
     },
     async getSentences (index) {
       const example = this.examples[index]
+      example.sents = []
+      example.sentences = []
       example.loading_sents = true
       const self = this
       const params = { t: this.term }
 
       if (example.period !== '') {
-        // TODO: uncomment when filtering by era is fixed
-        // params.era = example.period
+        params.era = example.period
       }
       if (example.category !== '') {
-        // TODO: uncomment when filtering by category is fixed
-        // params.category = example.category
+        params.category = example.category
       }
       // update periods and categories items based on current selection
       // period is selected
