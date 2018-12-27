@@ -42,7 +42,7 @@ $backend.$getDicts = () => $backend.get('dictionaries/', { params: { entry_set: 
 $backend.$getPostags = () => $backend.get('postags/')
 
 $backend.$getDocument = (id) => $backend.get('documents/' + id, { params: { raw: true } })
-$backend.$getSentences = (id, page = 1) => $backend.get('sentences/', { params: { id, page } })
+$backend.$getSentences = (params) => $backend.get('search/sentences', { params })
 
 $backend.$fetchAppears = (id) => $backend.get('meaning_appears/' + id)
 $backend.$fetchWordAppears = (params) => $backend.get('meaning_appears/', { params })
@@ -54,7 +54,7 @@ $backend.$createEntry = (term, meanings, id) => {
       meaning_set: meanings
     })
   } else {
-    console.log('seding post request with id', id)
+    console.log('seding post requesst with id', id)
     return $backend.post('entries/', {
       id: id,
       term: term,
@@ -62,5 +62,7 @@ $backend.$createEntry = (term, meanings, id) => {
     })
   }
 }
+
+$backend.$getPeriodsAndCategories = (params) => $backend.get('search/appears', { params })
 
 export default $backend
