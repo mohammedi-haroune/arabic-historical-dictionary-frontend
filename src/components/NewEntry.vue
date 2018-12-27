@@ -61,7 +61,7 @@
             :items="terms"
             required
             :is="term_tag"
-            @input="filterPeriodsAndCategories()"
+            @input="filterPeriodsAndCategoriesCouples()"
           ></component>
         </v-flex>
       </v-layout>
@@ -87,6 +87,7 @@
             v-model="meaning.posTag"
             :label="$t('message.meaning.posTag')"
             :items="postags"
+            clearable
           >
           </v-autocomplete>
         </v-flex>
@@ -97,6 +98,7 @@
             :label="$t('message.meaning.text')"
             :rules="requiredRules"
             required
+            clearable
           >
           </v-text-field>
         </v-flex>
@@ -135,7 +137,8 @@
               :loading="example.loading_periods"
               item-text="name"
               item-value="id"
-              @input="getSentences(index)"
+              @change="getSentences(index)"
+              clearable
             >
             </v-autocomplete>
           </v-flex>
@@ -144,9 +147,10 @@
               :disabled="inserting_example"
               v-model="example.category"
               :label="$t('message.example.category')"
-              :items="term_categories"
+              :items="example.categories"
               :loading="example.loading_categories"
-              @input="getSentences(index)"
+              @change="getSentences(index)"
+              clearable
             >
             </v-autocomplete>
           </v-flex>
@@ -171,7 +175,7 @@
           </v-flex>-->
           <v-flex xs1>
             <v-dialog v-model="dialog" scrollable max-width="600px" :disabled="example.sents.length === 0">
-              <v-btn icon slot="activator" :disabled="example.sents.length === 0" :loading="example.loading_sents">
+              <v-btn icon slot="activator" :disabled="example.sents.length === 0 || example.loading_sents" :loading="example.loading_sents">
                 <v-icon meduim>fa fa-list</v-icon>
               </v-btn>
               <v-card>
@@ -229,7 +233,8 @@
       </template>
     </v-container>
     <v-btn
-      :disabled="!valid || !selected_sentences()"
+      :disabled="submitted || loading_submit"
+      :loading="loading_submit"
       @click="submit"
     >
       {{ $t('message.submit') }}
@@ -250,10 +255,12 @@ export default {
   },
   data: () => ({
     valid: true,
+    loading_submit: false,
+    submitted: false,
     requiredRules: [v => !!v || 'This field is required'],
     term: '',
-    term_periods: [],
-    term_categories: [],
+    periodToCategories: {},
+    categoryToPeriods: {},
     dictionary: '',
     meanings: [],
     examples: [],
@@ -282,16 +289,7 @@ export default {
   methods: {
     submit () {
       if (this.$refs.form.validate()) {
-        /*
-        const examples = this.examples.map(example => ({
-          'document': example.document,
-          'sentence': example.sentence.sentence,
-          'confirmed': example.confirmed,
-          'position': example.sentence.position,
-          'word_position': example.sentence.sentence.indexOf(this.term)
-        }))
-        */
-
+        this.loading_submit = true
         const examples = this.examples.flatMap(example => {
           return example.sentences.map(index => example.sents[index]).map(sentence => {
             return {
@@ -309,8 +307,11 @@ export default {
         $backend.$createEntry(this.term, this.meanings, this.id_to_insert)
           .then(function (response) {
             self.success_snackbar = true
+            self.submitted = true
+            self.loading_submit = true
           })
           .catch(function (error) {
+            self.loading_submit = true
             self.failure_snackbar = true
           })
       }
@@ -337,26 +338,59 @@ export default {
         sents: [],
         sentences: [],
         sentence: '',
-        periods: this.term_periods,
+        periods: this.term_periods(),
         period: '',
-        categories: this.term_categories,
+        categories: this.term_categories(),
         category: '',
         loading_sents: false,
         confirmed: true
       })
     },
     async getSentences (index) {
-      this.filterPeriodsAndCategories(index)
       const example = this.examples[index]
       example.loading_sents = true
       const self = this
-
       const params = { t: this.term }
+
       if (example.period !== '') {
-        params.era = example.period
+        // TODO: uncomment when filtering by era is fixed
+        // params.era = example.period
       }
       if (example.category !== '') {
-        params.category = example.category
+        // TODO: uncomment when filtering by category is fixed
+        // params.category = example.category
+      }
+      // update periods and categories items based on current selection
+      // period is selected
+      console.log('getSentences', 'period: ', example.period, 'category: ', example.category)
+      // if (typeof example.period !== 'undefined' && example.period !== '') {
+      if (example.period) {
+        // period and category are selected
+        // if (typeof example.category !== 'undefined' && example.category !== '') {
+        if (example.category) {
+          console.log('period and category is selected')
+          example.periods = this.periodsFor(example.category)
+          example.categories = this.categoriesFor(example.period)
+          // period is selected, category not selected
+        } else {
+          console.log('period is selected, category not selected')
+          example.categories = this.categoriesFor(example.period)
+          example.periods = this.term_periods()
+        }
+        // period is not selected
+      } else {
+        // period not selected, category is selected
+        // if (typeof example.category !== 'undefined' && example.period !== '') {
+        if (example.category) {
+          console.log('period not selected, category is selected')
+          example.periods = this.periodsFor(example.category)
+          example.categories = this.term_categories()
+          // period not selected, category not selected
+        } else {
+          console.log('period not selected, category not selected')
+          example.categories = this.term_categories()
+          example.periods = this.term_periods()
+        }
       }
 
       example.sents = await $backend.$getSentences(params)
@@ -373,7 +407,7 @@ export default {
         })
       example.loading_sents = false
     },
-    async filterPeriodsAndCategories (index) {
+    async filterPeriodsAndCategoriesCouples (index) {
       const params = { t: this.term }
       const example = this.examples[index]
       if (typeof example !== 'undefined') {
@@ -399,6 +433,22 @@ export default {
       }
       const result = await $backend.$getPeriodsAndCategories(params)
       // if true, means a specific example is being updated, otherwise all examples are updated
+      console.log('result', result)
+      result.forEach((couple) => {
+        const period = couple[0]
+        const category = couple[1]
+        if (typeof this.periodToCategories[period] === 'undefined') {
+          this.periodToCategories[period] = new Set()
+        }
+        this.periodToCategories[period].add(category)
+        if (typeof this.categoryToPeriods[category] === 'undefined') {
+          this.categoryToPeriods[category] = new Set()
+        }
+        this.categoryToPeriods[category].add(period)
+      })
+      result.eras = result.map(el => el[0])
+      result.categories = result.map(el => el[1])
+
       if (typeof example !== 'undefined') {
         if (example.period === '') {
           example.periods = result.eras
@@ -423,6 +473,18 @@ export default {
     },
     selected_sentences () {
       return this.examples.flatMap(e => e.sentences).length > 0
+    },
+    categoriesFor (period) {
+      return Array.from(this.periodToCategories[period])
+    },
+    periodsFor (category) {
+      return Array.from(this.categoryToPeriods[category])
+    },
+    term_categories () {
+      return Object.keys(this.categoryToPeriods)
+    },
+    term_periods () {
+      return Object.keys(this.periodToCategories)
     }
   },
   mounted () {
