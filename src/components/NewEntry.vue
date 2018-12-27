@@ -61,6 +61,7 @@
             :items="terms"
             required
             :is="term_tag"
+            @input="filterPeriodsAndCategories()"
           ></component>
         </v-flex>
       </v-layout>
@@ -86,8 +87,6 @@
             v-model="meaning.posTag"
             :label="$t('message.meaning.posTag')"
             :items="postags"
-            :rules="requiredRules"
-            required
           >
           </v-autocomplete>
         </v-flex>
@@ -132,12 +131,11 @@
               :disabled="inserting_example"
               v-model="example.period"
               :label="$t('message.example.period')"
-              :items="periods"
+              :items="example.periods"
+              :loading="example.loading_periods"
               item-text="name"
               item-value="id"
-              :rules="requiredRules"
-              @input="filterDocuments(index)"
-              required
+              @input="getSentences(index)"
             >
             </v-autocomplete>
           </v-flex>
@@ -146,10 +144,9 @@
               :disabled="inserting_example"
               v-model="example.category"
               :label="$t('message.example.category')"
-              :items="categories"
-              :rules="requiredRules"
-              @input="filterDocuments(index)"
-              required
+              :items="term_categories"
+              :loading="example.loading_categories"
+              @input="getSentences(index)"
             >
             </v-autocomplete>
           </v-flex>
@@ -174,7 +171,7 @@
           </v-flex>-->
           <v-flex xs1>
             <v-dialog v-model="dialog" scrollable max-width="600px" :disabled="example.sents.length === 0">
-              <v-btn icon slot="activator" :disabled="example.sents.length === 0">
+              <v-btn icon slot="activator" :disabled="example.sents.length === 0" :loading="example.loading_sents">
                 <v-icon meduim>fa fa-list</v-icon>
               </v-btn>
               <v-card>
@@ -193,7 +190,6 @@
                     v-model="example.sentences"
                     :label="sent.sentence"
                     :value="i"
-                    required
                     return-object
                   ></v-checkbox>
                 </v-card-text>
@@ -233,7 +229,7 @@
       </template>
     </v-container>
     <v-btn
-      :disabled="!valid"
+      :disabled="!valid || !selected_sentences()"
       @click="submit"
     >
       {{ $t('message.submit') }}
@@ -256,6 +252,8 @@ export default {
     valid: true,
     requiredRules: [v => !!v || 'This field is required'],
     term: '',
+    term_periods: [],
+    term_categories: [],
     dictionary: '',
     meanings: [],
     examples: [],
@@ -295,9 +293,7 @@ export default {
         */
 
         const examples = this.examples.flatMap(example => {
-          console.log('example', example)
           return example.sentences.map(index => example.sents[index]).map(sentence => {
-            console.log('sentence', sentence)
             return {
               'document': sentence.document,
               'sentence': sentence.sentence,
@@ -312,11 +308,9 @@ export default {
         const self = this
         $backend.$createEntry(this.term, this.meanings, this.id_to_insert)
           .then(function (response) {
-            console.log(response)
             self.success_snackbar = true
           })
           .catch(function (error) {
-            console.error(error)
             self.failure_snackbar = true
           })
       }
@@ -337,79 +331,121 @@ export default {
       this.examples.splice(index, 1)
     },
     addExample () {
-      console.log('adding example yaw !')
       this.examples.push({
         documents: [],
         document: '',
         sents: [],
         sentences: [],
         sentence: '',
-        // periods: this.periods,
+        periods: this.term_periods,
         period: '',
-        // categories: this.categories,
+        categories: this.term_categories,
         category: '',
+        loading_sents: false,
         confirmed: true
       })
     },
-    async filterDocuments (index) {
-      const example = this.examples[index]
-      const periods = []
-      if (example['period']) periods.push(example['period'])
-      const categories = []
-      if (example['category']) categories.push(example['category'])
-      const docs = await $backend.$fetchDocuments(periods, categories, '')
-      example.documents = docs.results
-      this.getSentences(index)
-    },
     async getSentences (index) {
+      this.filterPeriodsAndCategories(index)
       const example = this.examples[index]
-      const documents = example.documents
-      example.sents.splice(0, example.sents.length)
-      example.sentences.splice(0, example.sentences.length)
-      documents.forEach(doc => {
-        $backend.$getSentences(doc.id)
-          .then(res => {
-            res.results.map(o => {
-              o.sentence = o.sentence.join(' ').substring(0, 60)
-              return o
-            }).forEach(o => example.sents.push(o))
+      example.loading_sents = true
+      const self = this
+
+      const params = { t: this.term }
+      if (example.period !== '') {
+        params.era = example.period
+      }
+      if (example.category !== '') {
+        params.category = example.category
+      }
+
+      example.sents = await $backend.$getSentences(params)
+        .then(res => {
+          return res.map(function (o) {
+            o.sentence = o.sentence.join(' ')
+            const i = o.sentence.indexOf(self.term)
+            // truncate sentence to fit in the list
+            const start = i - 30 < 0 ? 0 : i - 30
+            const end = i + 30 > o.sentence.length ? o.sentence.lenght : i + 30
+            o.sentence = o.sentence.substring(start, end)
+            return o
           })
-      })
+        })
+      example.loading_sents = false
     },
-    log (example) {
-      console.log(example.sentence)
+    async filterPeriodsAndCategories (index) {
+      const params = { t: this.term }
+      const example = this.examples[index]
+      if (typeof example !== 'undefined') {
+        if (example.period !== '') {
+          params.era = example.period
+        } else {
+          example.loading_periods = true
+        }
+        if (example.category !== '') {
+          params.category = example.category
+        } else {
+          example.loading_categories = true
+        }
+      } else {
+        this.examples.forEach(example => {
+          if (example.period === '') {
+            example.loading_periods = true
+          }
+          if (example.category === '') {
+            example.loading_categories = true
+          }
+        })
+      }
+      const result = await $backend.$getPeriodsAndCategories(params)
+      // if true, means a specific example is being updated, otherwise all examples are updated
+      if (typeof example !== 'undefined') {
+        if (example.period === '') {
+          example.periods = result.eras
+          example.loading_periods = false
+        }
+        if (example.category === '') {
+          example.categories = result.categories
+          example.loading_categories = false
+        }
+      } else {
+        this.examples.forEach(example => {
+          if (example.period === '') {
+            example.periods = result.eras
+            example.loading_periods = false
+          }
+          if (example.category === '') {
+            example.categories = result.categories
+            example.loading_categories = false
+          }
+        })
+      }
     },
-    open_dialog (example) {
-      this.dialog = true
+    selected_sentences () {
+      return this.examples.flatMap(e => e.sentences).length > 0
     }
   },
   mounted () {
-    console.log('mounted !')
     if (this.inserting_example) {
-      console.log('received example_to_insert: ', this.example_to_insert)
-      console.log('received example_to_insert.sentences[0]: ', this.example_to_insert.sents[0].sentence.split(' '))
       this.examples.push(this.example_to_insert)
       this.terms = this.example_to_insert.sents[0].sentence.split(' ')
-      console.log('this.terms', this.terms)
       this.term_tag = 'v-autocomplete'
     } else {
       // ensure that at least one example is added
       this.addExample()
     }
     if (this.inserting_term) {
-      console.log('received term_to_insert', this.term_to_insert)
       this.term = this.term_to_insert
+
+      // ensure periods and categories are filtered if the term is initialized when inserting a term from the dictionary
+      this.filterPeriodsAndCategories()
     }
     if (this.inserting_meaning) {
-      console.log('received meaning_to_insert', this.meaning_to_insert)
       this.meanings = [ this.meaning_to_insert ]
       this.meaning = this.meaning_to_insert
     } else {
       // ensure that at least one meaning is added
       this.addMeaning()
-    }
-    if (this.inserting_id) {
-      console.log('recevied id_to_insert', this.id_to_insert)
     }
   }
 }
