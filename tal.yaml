@@ -79,7 +79,7 @@ metadata:
   labels:
     app: tal
 spec:
-  loadBalancerIP: "35.194.11.202"
+  loadBalancerIP: "35.193.115.254"
   type: LoadBalancer
   ports:
   - name: tal-frontend-port
