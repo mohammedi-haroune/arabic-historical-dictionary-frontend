@@ -192,6 +192,17 @@ export default {
       return "mdi-checkbox-blank-outline";
     },
     ...mapState(["periods", "categories"])
+  },
+  watch: {
+    query (val) {
+      this.page = 1;
+    },
+    selectedPeriods (val) {
+      this.page = 1
+    },
+    selectedCategories (val) {
+      this.page = 1
+    }
   }
 };
 </script>
