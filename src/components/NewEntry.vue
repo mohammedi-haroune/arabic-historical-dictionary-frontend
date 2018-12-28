@@ -91,7 +91,7 @@
             v-model="meaning.posTag"
             :label="$t('message.meaning.posTag')"
             :items="postags"
-            @input="this.submitted = false"
+            @input="submitted = false"
             clearable
           >
           </v-autocomplete>
@@ -102,7 +102,7 @@
             v-model="meaning.text"
             :label="$t('message.meaning.text')"
             :rules="requiredRules"
-            @input="this.submitted = false"
+            @input="submitted = false"
             required
             clearable
           >
