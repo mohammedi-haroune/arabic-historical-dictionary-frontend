@@ -1,13 +1,7 @@
 <template>
   <v-container grid-list-md text-xs-center>
     <v-layout row wrap>
-      <v-toolbar color="blue" dark>
-        <v-spacer></v-spacer>
-        <v-toolbar-title v-text="meaning"></v-toolbar-title>
-        <v-spacer></v-spacer>
-      </v-toolbar>
-      <v-spacer></v-spacer>
-      <v-flex v-for="d in datacollections" :key="d.datasets" xs4>
+      <v-flex v-for="(d, i) in datacollections" :key="i" xs4>
         <v-hover>
           <v-card slot-scope="{ hover }" :class="`elevation-${hover ? 10 : 0}`">
             <template>
@@ -15,20 +9,6 @@
               <line-chart :chart-data="d"></line-chart>
               <v-spacer></v-spacer>
             </template>
-            <v-card-actions>
-              <v-btn flat>Share</v-btn>
-              <v-btn flat color="purple">Explore</v-btn>
-              <v-spacer></v-spacer>
-              <v-btn icon @click="show = !show">
-                <v-icon>{{ show ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</v-icon>
-              </v-btn>
-            </v-card-actions>
-
-            <v-slide-y-transition>
-              <v-card-text
-                v-show="show"
-              >I'm a thing. But, like most politicians, he promised more than he could deliver. You won't have time for sleeping, soldier, not with all the bed making you'll be doing. Then we'll go with that data file! Hey, you add a one and two zeros to that or we walk! You're going to do his laundry? I've got to find a way to escape.</v-card-text>
-            </v-slide-y-transition>
           </v-card>
         </v-hover>
       </v-flex>
@@ -37,14 +17,17 @@
 </template>
 
 <script>
-import LineChart from "@/components/LineChart";
+import LineChart from "../components/LineChart";
 import $backend from "../backend";
 
 export default {
+  name: 'Graphs',
   components: {
     LineChart
   },
-
+  props: {
+    id: Number
+  },
   data() {
     return {
       datacollections: [],
@@ -71,8 +54,7 @@ export default {
       // console.table(meaning);
     },
     async getDataFromQuery() {
-      var term = "ذكر";
-      this.stats = await $backend.$getStatisticsByTerm(term);
+      this.stats = await $backend.$getStatisticsById(this.id);
       var target = { ...this.stats };
       var keys = Object.keys(this.stats);
       var del = keys.shift();
@@ -94,7 +76,7 @@ export default {
       this.stats = target;
       delete target[0];
       const k = Object.keys(this.stats);
-      this.meaning = term;
+      this.meaning = this.id;
       const eras = this.stats[k[0]]["stats"];
       this.labels = Object.keys(eras);
       const categories = Object.keys(eras[this.labels[0]]);

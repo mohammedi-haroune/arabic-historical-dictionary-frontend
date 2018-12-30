@@ -241,7 +241,7 @@ import Graphs from '../components/Graphs'
 
 export default {
   name: "Dictionary2",
-  components: { CheckHistory, History, NewEntry },
+  components: { CheckHistory, History, NewEntry, Graphs },
   data() {
     return {
       id: 2,
