@@ -12,7 +12,7 @@
       browser: "تصفح الملفات"
       add_entry: "أضف مصلح"
       dict: "القاموس"
-      graphs: "الإحصائات"
+      graphs: "الإحصائيات"
       hist_dict: "القاموس التاريخي"
       check: "مراجعة الأمثلة"
       about: "من نحن ؟"
@@ -111,7 +111,7 @@ export default {
         { 
           icon: "fa fa-chart-bar", 
           title: this.$t("message.graphs"), 
-          to: "/graphs" 
+          to: "/graphs"
         },
         {
           icon: "fa fa-info-circle",
