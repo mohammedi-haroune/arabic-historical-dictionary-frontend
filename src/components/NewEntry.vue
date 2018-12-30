@@ -409,11 +409,11 @@ export default {
         .then(res => {
           return res.map(function (o) {
             o.sentence = o.sentence.join(' ')
-            const i = o.sentence.indexOf(self.term)
+            //const i = o.sentence.indexOf(self.term)
             // truncate sentence to fit in the list
-            const start = i - 30 < 0 ? 0 : i - 30
-            const end = i + 30 > o.sentence.length ? o.sentence.lenght : i + 30
-            o.sentence = o.sentence.substring(start, end)
+            //const start = i - 30 < 0 ? 0 : i - 30
+            //const end = i + 30 > o.sentence.length ? o.sentence.lenght : i + 30
+            //o.sentence = o.sentence.substring(start, end)
             return o
           })
         })
