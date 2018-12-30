@@ -8,6 +8,7 @@
       term:
         add: "إضافة مصطلح تاريخي"
         history: "تاريخ المعنى"
+        stats: "إحصائيات"
 </i18n>
 <template>
   <v-container>
