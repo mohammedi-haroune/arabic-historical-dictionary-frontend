@@ -70,6 +70,21 @@
           </v-card-text>
         </v-card>
       </v-dialog>
+      <v-dialog scrollable v-if="dialog_stats" lazy v-model="dialog_stats">
+        <v-card>
+          <v-toolbar>
+            <v-icon>mdi-cursor-text</v-icon>
+            <v-toolbar-title>{{ $t('message.term.stats') }}</v-toolbar-title>
+            <v-spacer></v-spacer>
+            <v-btn icon @click="dialog_stats = false">
+              <v-icon color="red">close</v-icon>
+            </v-btn>
+          </v-toolbar>
+          <v-card-text>
+            <graphs :id="selected_id"></graphs>
+          </v-card-text>
+        </v-card>
+      </v-dialog>
     </v-layout>
     <v-layout justify-center row wrap>
       <v-flex text-xs-center mx-4 xs12>
@@ -192,6 +207,10 @@
             <v-btn small color="success lighten-1" v-if="leaf" icon @click="add(term_id_from_meaning(item.id), term_from_meaning(item.id), item)">
               <v-icon>add</v-icon>
             </v-btn>
+
+            <v-btn small color="secondary lighten-1" v-if="leaf" icon @click="stats(term_id_from_meaning(item.id))">
+              <v-icon>fa fa-chart-bar</v-icon>
+            </v-btn>
           </template>
           <template slot="append" slot-scope="{ item, open, leaf }">
             <v-btn small color="info darken-2" v-if="leaf && item.is_appears" icon @click="history(item.id)">
@@ -218,6 +237,7 @@ import NewEntry from "../components/NewEntry";
 import History from "../components/History";
 import { mapState } from "vuex";
 import CheckHistory from '../components/CheckHistory'
+import Graphs from '../components/Graphs'
 
 export default {
   name: "Dictionary2",
@@ -237,6 +257,7 @@ export default {
       selected_meaning_id: "",
       dialog_history: false,
       dialog_check_history: false,
+      dialog_stats: false,
       selectedPeriods: [],
       selectedCategories: [],
       clicked: false,
@@ -278,6 +299,11 @@ export default {
       console.log("selected_term", this.selected_term);
       console.log("selected_meaning", this.selected_meaning);
       this.dialog_add = true;
+    },
+    stats (id) {
+      console.log('id', id)
+      this.selected_id = id
+      this.dialog_stats = true
     },
     history(id) {
       console.log("meaning_id", id);
