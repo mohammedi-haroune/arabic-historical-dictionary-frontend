@@ -42,7 +42,8 @@ $backend.$getDicts = () => $backend.get('dictionaries/', { params: { entry_set: 
 $backend.$getPostags = () => $backend.get('postags/')
 
 $backend.$getDocument = (id) => $backend.get('documents/' + id, { params: { raw: true } })
-$backend.$getSentences = (id, page = 1) => $backend.get('sentences/', { params: { id, page } })
+$backend.$getSentences = (params) => $backend.get('search/sentences', { params })
+$backend.$getDocumentSentences = (id, page = 1) => $backend.get('sentences/', { params: { id, page } })
 
 $backend.$fetchAppears = (id) => $backend.get('meaning_appears/' + id)
 $backend.$fetchWordAppears = (params) => $backend.get('meaning_appears/', { params })
@@ -50,12 +51,22 @@ $backend.$fetchWordAppears = (params) => $backend.get('meaning_appears/', { para
 $backend.$getStatisticsById = (word_id) => $backend.get('statistics/word?id=' + word_id, { params: { raw: true } })
 $backend.$getStatisticsByTerm = (word) => $backend.get('statistics/word?t=' + word, { params: { raw: true } })
 
+$backend.$createEntry = (term, meanings, id) => {
+  if (typeof id === 'undefined') {
+    return $backend.post('entries/', {
+      term: term,
+      meaning_set: meanings
+    })
+  } else {
+    console.log('seding post requesst with id', id)
+    return $backend.post('entries/', {
+      id: id,
+      term: term,
+      meaning_set: meanings
+    })
+  }
+}
 
-$backend.$createEntry = (term, meanings, examples) =>
-  $backend.post('entries/', {
-    term: term,
-    dictionary: 1,
-    meaning_set: meanings
-  })
+$backend.$getPeriodsAndCategories = (params) => $backend.get('search/appears', { params })
 
 export default $backend

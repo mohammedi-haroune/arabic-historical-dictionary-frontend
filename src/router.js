@@ -28,6 +28,7 @@ export default new Router({
     route('graphs'),
     route('dashboard'),
     { path: '/document/:id', component: resolve => import('./views/Document.vue').then(resolve) },
+    { path: '/check/:meaning_id', component: resolve => import('./views/Check.vue').then(resolve) },
     // Global redirect for 404
     { path: '*', redirect: '/welcome' }
   ]

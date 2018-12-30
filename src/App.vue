@@ -12,7 +12,9 @@
       browser: "تصفح الملفات"
       add_entry: "أضف مصلح"
       dict: "القاموس"
+      graphs: "الإحصائات"
       hist_dict: "القاموس التاريخي"
+      check: "مراجعة الأمثلة"
       about: "من نحن ؟"
 </i18n>
 
@@ -22,7 +24,7 @@
       <v-list>
         <v-list-tile router :to="item.to" :key="i" v-for="(item, i) in items" exact>
           <v-list-tile-action>
-            <v-icon v-html="item.icon"></v-icon>
+            <v-icon :color="colors[i]" v-html="item.icon"></v-icon>
           </v-list-tile-action>
           <v-list-tile-content>
             <v-list-tile-title v-text="item.title"></v-list-tile-title>
@@ -76,18 +78,46 @@
 export default {
   data() {
     return {
+      colors: [
+        "cyan lighten-1",
+        "purple lighten-2",
+        "amber lighten-1",
+        "cyan lighten-1",
+        "red lighten-1",
+        "green lighten-1",
+        "blue lighten-1",
+        "amber lighten-1"
+      ],
       items: [
-        { icon: "apps", title: "Welcome", to: "/welcome" },
-        { icon: "create", title: "Corpus", to: "/corpus" },
-        { icon: "bubble_chart", title: "Inspire", to: "/inspire" },
-        { icon: "explore", title: "Corpus Browser", to: "/browser" },
-        { icon: "edit", title: "Add Entry", to: "/entry" },
-        { icon: "check", title: "Corpus Selection", to: "/select" },
-        { icon: "fa fa-book", title: "Dictionaries", to: "/dictionary" },
-        { icon: "fa fa-book-open", title: "Dictionaries2", to: "/dictionary2" },
-        { icon: "fa fa-chart-bar", title: "Graphs", to: "/graphs" },
-        { icon: "fa fa-info-circle", title: "About", to: "/about" },
-        { icon: "fa fa-info-circle", title: "Dashboard", to: "/dashboard" }
+        { icon: "apps", title: this.$t("message.welcome"), to: "/welcome" },
+        { icon: "create", title: this.$t("message.corpus"), to: "/corpus" },
+        { icon: "explore", title: this.$t("message.browser"), to: "/browser" },
+        { icon: "edit", title: this.$t("message.add_entry"), to: "/entry" },
+        {
+          icon: "fa fa-book",
+          title: this.$t("message.dict"),
+          to: "/dictionary"
+        },
+        {
+          icon: "fa fa-book-open",
+          title: this.$t("message.hist_dict"),
+          to: "/dictionary2"
+        },
+        {
+          icon: "fa fa-bookmark",
+          title: this.$t("message.check"),
+          to: "/check"
+        },
+        { 
+          icon: "fa fa-chart-bar", 
+          title: this.$t("message.graphs"), 
+          to: "/graphs" 
+        },
+        {
+          icon: "fa fa-info-circle",
+          title: this.$t("message.about"),
+          to: "/about"
+        }
       ],
       drawer: true,
       fixed: false,

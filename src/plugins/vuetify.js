@@ -3,6 +3,8 @@ import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
 import i18n from './vuei18n'
 import '@mdi/font/css/materialdesignicons.css' // Ensure you are using css-loader
+import colors from 'vuetify/es5/util/colors'
+
 
 Vue.use(Vuetify, {
   /* theme: {
@@ -14,9 +16,12 @@ Vue.use(Vuetify, {
     success: '#4CAF50',
     warning: '#FFC107'
   }, */
+  theme: {
+    primary: colors.blue.darken2
+  },
   iconfont: 'mdi',
   lang: {
-    locales: { },
+    locales: {},
     current: 'ar',
     t: (key, ...params) => i18n.t(key, params)
   },
