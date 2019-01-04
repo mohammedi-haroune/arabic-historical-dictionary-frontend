@@ -198,7 +198,6 @@
           item-children="meaning_set"
           item-key="id"
           item-text="term"
-          open-on-click
           open-all
           on-icon="fa fa-cubes"
           off-icon="fa fa-cubes"
@@ -209,7 +208,7 @@
               <v-icon>add</v-icon>
             </v-btn>
 
-            <v-btn small color="secondary lighten-1" v-if="leaf" icon @click="stats(term_id_from_meaning(item.id))">
+            <v-btn small color="secondary lighten-1" v-if="!leaf" icon @click="stats(item.id)">
               <v-icon>fa fa-chart-bar</v-icon>
             </v-btn>
           </template>
