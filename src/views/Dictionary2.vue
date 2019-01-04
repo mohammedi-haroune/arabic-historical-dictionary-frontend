@@ -212,7 +212,7 @@
               <v-icon>fa fa-chart-bar</v-icon>
             </v-btn>
 
-            <v-btn small color="secondary lighten-1" v-if="leaf" icon @click="stats(item.id, term_id_from_meaning(item.id))">
+            <v-btn small color="secondary lighten-1" v-if="leaf" icon @click="stats(term_id_from_meaning(item.id), item.id)">
               <v-icon>fa fa-chart-bar</v-icon>
             </v-btn>
           </template>
