@@ -40,7 +40,8 @@ export default {
     LineChart
   },
   props: {
-    id: Number
+    word_id: Number,
+    meaning_id: Number
   },
   data() {
     return {
@@ -63,7 +64,7 @@ export default {
     async getDataFromQuery() {
       this.loading = true
       try {
-        this.stats = await $backend.$getStatisticsById(this.id);
+        this.stats = await $backend.$getStatisticsById(this.word_id);
         if (!_.isEmpty(this.stats)) {
 
           var target = { ...this.stats };

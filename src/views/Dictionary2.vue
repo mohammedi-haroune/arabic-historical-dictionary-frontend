@@ -82,7 +82,7 @@
             </v-btn>
           </v-toolbar>
           <v-card-text>
-            <graphs :id="selected_id"></graphs>
+            <graphs :word_id="selected_id" :meaning_id="selected_meaning_id"></graphs>
           </v-card-text>
         </v-card>
       </v-dialog>
@@ -211,6 +211,10 @@
             <v-btn small color="secondary lighten-1" v-if="!leaf" icon @click="stats(item.id)">
               <v-icon>fa fa-chart-bar</v-icon>
             </v-btn>
+
+            <v-btn small color="secondary lighten-1" v-if="leaf" icon @click="stats(item.id, term_id_from_meaning(item.id))">
+              <v-icon>fa fa-chart-bar</v-icon>
+            </v-btn>
           </template>
           <template slot="append" slot-scope="{ item, open, leaf }">
             <v-btn small color="info darken-2" v-if="leaf && item.is_appears" icon @click="history(item.id)">
@@ -300,9 +304,10 @@ export default {
       console.log("selected_meaning", this.selected_meaning);
       this.dialog_add = true;
     },
-    stats (id) {
-      console.log('id', id)
-      this.selected_id = id
+    stats (word_id, meaning_id) {
+      console.log('id', word_id)
+      this.selected_id = word_id
+      this.selected_meaning_id = meaning_id;
       this.dialog_stats = true
     },
     history(id) {
