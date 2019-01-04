@@ -5,9 +5,34 @@
       deleted: "الأمثلة الملغات"
       title: "تعديل الأمثلة"
       error: "حدث خطأ عند إنشاء المصطلح"
+      submitted: "سبيل المصطلح تم إنشاؤها بنجاح"
 </i18n>
 <template>
     <div>
+    <v-snackbar
+      v-model="error_submit"
+      color="error"
+      :timeout="5000"
+      top
+      absolute
+      center
+      closeable
+    >
+      {{ $t('message.error') }}
+    </v-snackbar>
+
+    <v-snackbar
+      v-model="submitted"
+      color="success"
+      :timeout="5000"
+      top
+      absolute
+      center
+      closeable
+    >
+      {{ $t('message.submitted') }}
+    </v-snackbar>
+
       <v-dialog v-model="dialog" scrollable max-width="600px">
         <v-card>
           <v-toolbar>
@@ -100,7 +125,11 @@
             </v-btn>
           </v-fab-transition>
         </div>
-      <v-btn>
+      <v-btn
+      :disabled="submitted || loading_submit"
+      :loading="loading_submit"
+      @click="submit"
+      >
         {{ $t('message.submit') }}
       </v-btn>
       </template>
@@ -108,7 +137,7 @@
 </template>
 
 <script>
-import $bakcend from '../backend'
+import $backend from '../backend'
 import { mapState } from 'vuex'
 import _ from 'lodash'
 import DocumentContent from './DocumentContent'
@@ -129,6 +158,9 @@ export default {
       dialog: false,
       loading: false,
       error: false,
+      loading_submit: false,
+      error_submit: false,
+      submitted: false,
       colors: [
         'cyan lighten-1',
         'purple lighten-2',
@@ -164,9 +196,10 @@ export default {
       this.loading = true
       this.error = false
       console.log('fetch for ', this.meaning_id)
-      $bakcend.$fetchAppears(this.meaning_id).then(results => {
+      $backend.$fetchAppears(this.meaning_id).then(results => {
         console.log(results)
         this.appears_set = results.appears_set
+        this.appears_by_period = []
         this.appears_set.forEach(appear => {
           if (typeof this.appears_by_period[appear.period_id] === 'undefined') {
             this.appears_by_period[appear.period_id] = []
@@ -186,7 +219,22 @@ export default {
     appears_for (id) {
       return this.appears_set
         .filter(a => a.period_id === id)
-    }
+    },
+    async submit () {
+      this.loading_submit = true
+      try {
+        await Promise.all(this.deleted.map(appears => $backend.$deleteAppears(appears.id)))
+        await Promise.all(this.appears_set.map(appears => $backend.$putAppears(appears.id, appears)))
+      } catch (err) {
+        console.error(err)
+        this.error_submit = true
+      }
+      this.submitted = true
+      this.deleted = []
+      this.loading_submit = false
+
+      this.fetchAppears()
+    },
   },
   created () {
     this.fetchAppears()

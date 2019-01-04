@@ -46,6 +46,10 @@ $backend.$getSentences = (params) => $backend.get('search/sentences', { params }
 $backend.$getDocumentSentences = (id, page = 1) => $backend.get('sentences/', { params: { id, page } })
 
 $backend.$fetchAppears = (id) => $backend.get('meaning_appears/' + id)
+$backend.$deleteAppears = (id) => $backend.delete('appears/' + id + '/')
+$backend.$putAppears = (id, appears) => $backend.put('appears/' + id + '/', appears)
+$backend.$patchAppears = (id) => $backend.delete('meaning_appears/' + id + '/')
+
 $backend.$fetchWordAppears = (params) => $backend.get('meaning_appears/', { params })
 
 $backend.$getStatisticsById = (word_id) => $backend.get('statistics/word?id=' + word_id, { params: { raw: true } })
