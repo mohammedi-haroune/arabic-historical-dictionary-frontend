@@ -25,11 +25,11 @@
             </v-btn>
           </v-toolbar>
           <v-card-text>
-          <new-entry
-            :term_to_insert="selected_term"
-            :id_to_insert="selected_id"
-            :meaning_to_insert="selected_meaning"
-          ></new-entry>
+            <new-entry
+              :term_to_insert="selected_term"
+              :id_to_insert="selected_id"
+              :meaning_to_insert="selected_meaning"
+            ></new-entry>
           </v-card-text>
         </v-card>
       </v-dialog>
@@ -190,7 +190,7 @@
           </li>
         </ol>
       </v-flex>
-    </v-layout> -->
+    </v-layout>-->
     <v-layout v-else-if="items.length > 0">
       <v-flex pa-4 xs12>
         <v-treeview
@@ -204,7 +204,13 @@
           indeterminate-icon="fa fa-cubes"
         >
           <template slot="prepend" slot-scope="{ item, open, leaf }">
-            <v-btn small color="success lighten-1" v-if="leaf" icon @click="add(term_id_from_meaning(item.id), term_from_meaning(item.id), item)">
+            <v-btn
+              small
+              color="success lighten-1"
+              v-if="leaf"
+              icon
+              @click="add(term_id_from_meaning(item.id), term_from_meaning(item.id), item)"
+            >
               <v-icon>add</v-icon>
             </v-btn>
 
@@ -212,15 +218,34 @@
               <v-icon>fa fa-chart-bar</v-icon>
             </v-btn>
 
-            <v-btn small color="secondary lighten-1" v-if="leaf" icon @click="stats(term_id_from_meaning(item.id), item.id)">
+            <v-btn
+              small
+              color="secondary lighten-1"
+              v-if="leaf"
+              icon
+              @click="stats(item.id, term_id_from_meaning(item.id))"
+            >
               <v-icon>fa fa-chart-bar</v-icon>
             </v-btn>
           </template>
           <template slot="append" slot-scope="{ item, open, leaf }">
-            <v-btn small color="info darken-2" v-if="leaf && item.is_appears" icon @click="history(item.id)">
+            <v-btn
+              small
+              color="info darken-2"
+              v-if="leaf && item.is_appears"
+              icon
+              @click="history(item.id)"
+            >
               <v-icon>fa fa-info</v-icon>
             </v-btn>
-            <v-btn small dark color="amber darken-3" v-if="leaf && item.is_appears" icon @click="checkHistory(item.id)">
+            <v-btn
+              small
+              dark
+              color="amber darken-3"
+              v-if="leaf && item.is_appears"
+              icon
+              @click="checkHistory(item.id)"
+            >
               <v-icon>edit</v-icon>
             </v-btn>
           </template>
@@ -240,8 +265,8 @@ import $backend from "../backend";
 import NewEntry from "../components/NewEntry";
 import History from "../components/History";
 import { mapState } from "vuex";
-import CheckHistory from '../components/CheckHistory'
-import Graphs from '../components/Graphs'
+import CheckHistory from "../components/CheckHistory";
+import Graphs from "../components/Graphs";
 
 export default {
   name: "Dictionary2",
@@ -279,11 +304,12 @@ export default {
         .then(response => {
           const set = response.results.map(o => {
             o.meaning_set = o.meaning_set.map(meaning => {
-              meaning.term = (meaning.posTag ? meaning.posTag + ' : ' : '') + meaning.text
-              return meaning
-            })
-            return o
-          })
+              meaning.term =
+                (meaning.posTag ? meaning.posTag + " : " : "") + meaning.text;
+              return meaning;
+            });
+            return o;
+          });
           this.items.length = 0;
           this.items.push(...set);
           this.num_pages = Math.round(response.count / 12);
@@ -298,17 +324,17 @@ export default {
     add(id, term, meaning) {
       console.log("term", term);
       this.selected_term = term;
-      this.selected_id = id
+      this.selected_id = id;
       this.selected_meaning = meaning;
       console.log("selected_term", this.selected_term);
       console.log("selected_meaning", this.selected_meaning);
       this.dialog_add = true;
     },
-    stats (word_id, meaning_id) {
-      console.log('id', word_id)
-      this.selected_id = word_id
+    stats(word_id, meaning_id) {
+      console.log("id", word_id);
+      this.selected_id = word_id;
       this.selected_meaning_id = meaning_id;
-      this.dialog_stats = true
+      this.dialog_stats = true;
     },
     history(id) {
       console.log("meaning_id", id);
@@ -340,11 +366,15 @@ export default {
         this.fetchEntries();
       });
     },
-    term_from_meaning (id) {
-      return this.items.filter(item => item.meaning_set.map(m => m.id).includes(id))[0].term
+    term_from_meaning(id) {
+      return this.items.filter(item =>
+        item.meaning_set.map(m => m.id).includes(id)
+      )[0].term;
     },
-    term_id_from_meaning (id) {
-      return this.items.filter(item => item.meaning_set.map(m => m.id).includes(id))[0].id
+    term_id_from_meaning(id) {
+      return this.items.filter(item =>
+        item.meaning_set.map(m => m.id).includes(id)
+      )[0].id;
     }
   },
   computed: {
