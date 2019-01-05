@@ -23,6 +23,8 @@
           indeterminate
         ></v-progress-circular>
       </v-flex>
+    </v-layout>
+    <v-layout row wrap justify-center>
       <template v-if="!error && !loading && datacollections.length > 0">
         <v-flex v-for="(d, i) in datacollections" :key="i" xs4>
           <v-hover>
