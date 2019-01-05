@@ -20,6 +20,7 @@
       more: "اقرأ المزيد"
       example:
         add: "إضافة مثال تاريخي"
+      graphs : "استخدام كلمات الجملة"
 </i18n>
 <template>
   <v-container fluid>
@@ -77,7 +78,7 @@
         <v-card>
           <v-toolbar>
             <v-icon>mdi-cursor-text</v-icon>
-            <v-toolbar-title>{{ $t('message.example.add') }}</v-toolbar-title>
+            <v-toolbar-title>{{ $t('message.graphs') }}</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-btn icon @click="statdialog = false">
               <v-icon color="red">close</v-icon>
