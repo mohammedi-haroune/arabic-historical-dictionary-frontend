@@ -10,7 +10,7 @@
       <v-container fill-height>
         <v-layout row wrap align-center>
           <v-flex class="text-xs-center">
-            <v-icon dark size="50px">fa-home</v-icon>
+            <v-icon dark size="50px">mdi-chart</v-icon>
           </v-flex>
         </v-layout>
       </v-container>

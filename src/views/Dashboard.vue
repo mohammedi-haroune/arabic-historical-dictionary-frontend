@@ -14,7 +14,7 @@
   <v-container fluid grid-list-md>
     <v-layout row wrap>
       <v-flex d-flex xs12 sm6 md4>
-        <StatCard :title="$t(message.word)"></StatCard>
+        <StatCard :title="lorem"></StatCard>
       </v-flex>
       <v-flex d-flex xs12 sm6 md4></v-flex>
     </v-layout>

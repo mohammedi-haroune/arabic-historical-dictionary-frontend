@@ -58,7 +58,8 @@ export default {
   },
   props: {
     word_id: Number,
-    meaning_id: Number
+    meaning_id: Number,
+    sents: Object
   },
   data() {
     return {
@@ -69,12 +70,13 @@ export default {
       meaning: "None",
       show: false,
       loading: false,
-      error: false,
-      sents: []
+      error: false
+      // sents: []
     };
   },
   mounted() {
-    // this.sents = ["من"];
+    this.sents = this.sents.sents[0].sentence.split(" ");
+    // console.log("sents are", this.sents.sents[0].sentence.split(" "));
     this.getDataFromQuery();
     // console.log("mounted with ", this.datacollections);
   },
@@ -85,6 +87,7 @@ export default {
       const dict = {};
       try {
         if (this.sents.length > 0) {
+          console.log("EHJSHJZEH");
           this.stats = await $backend.$getStatisticsSentsByWords(this.sents);
           if (!_.isEmpty(this.stats)) {
             const eras = this.stats["stats"];

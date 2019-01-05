@@ -51,7 +51,7 @@
           <v-btn fab dark small @click="log" color="indigo">
             <v-icon>add</v-icon>
           </v-btn>
-          <v-btn fab dark small color="red">
+          <v-btn fab dark small @click="stats" color="red">
             <v-icon>search</v-icon>
           </v-btn>
         </v-speed-dial>
@@ -69,9 +69,22 @@
             </v-btn>
           </v-toolbar>
           <v-card-text>
-            <new-entry
-              :example_to_insert="selected_example"
-            ></new-entry>
+            <new-entry :example_to_insert="selected_example"></new-entry>
+          </v-card-text>
+        </v-card>
+      </v-dialog>
+      <v-dialog scrollable lazy v-model="statdialog" v-if="statdialog">
+        <v-card>
+          <v-toolbar>
+            <v-icon>mdi-cursor-text</v-icon>
+            <v-toolbar-title>{{ $t('message.example.add') }}</v-toolbar-title>
+            <v-spacer></v-spacer>
+            <v-btn icon @click="statdialog = false">
+              <v-icon color="red">close</v-icon>
+            </v-btn>
+          </v-toolbar>
+          <v-card-text>
+            <graphs :sents="selected_example"></graphs>
           </v-card-text>
         </v-card>
       </v-dialog>
@@ -114,10 +127,10 @@
 <script>
 import $backend from "../backend";
 import NewEntry from "../components/NewEntry";
-
+import Graphs from "../components/Graphs";
 export default {
   name: "DocumentContent",
-  components: { NewEntry },
+  components: { NewEntry, Graphs },
   props: ["id"],
   data() {
     return {
@@ -126,10 +139,11 @@ export default {
       fab: false,
       selected: {
         position: -1,
-        sentence: '',
+        sentence: "",
         document: -1
       },
       dialog: false,
+      statdialog: false,
       loading: false,
       loading_sents: false,
       pages: 0,
@@ -138,7 +152,7 @@ export default {
     };
   },
   computed: {
-    items: function () {
+    items: function() {
       return [
         {
           title: "message.name",
@@ -156,7 +170,7 @@ export default {
           value: this.doc.category
         },
         { title: "message.author", icon: "edit", value: this.doc.author }
-      ]
+      ];
     },
     selected_example: function() {
       return {
@@ -164,16 +178,16 @@ export default {
         document: this.doc.id,
         sents: [this.selected],
         sentences: [0],
-        sentence: '',
+        sentence: "",
         periods: [this.doc.period],
         period: this.doc.period.id,
         categories: [this.doc.category],
         category: this.doc.category,
         confirmed: true
-      }
+      };
     },
-    more_pages () {
-      return this.pages > this.loaded_pages
+    more_pages() {
+      return this.pages > this.loaded_pages;
     }
   },
   created() {
@@ -188,10 +202,13 @@ export default {
         this.fetchSentences();
       }
     },
-    async fetchSentences () {
+    async fetchSentences() {
       this.loading_sents = true;
       this.loaded_pages = this.loaded_pages + 1;
-      const res = await $backend.$getDocumentSentences(this.id, this.loaded_pages);
+      const res = await $backend.$getDocumentSentences(
+        this.id,
+        this.loaded_pages
+      );
       this.pages = Math.floor(res.count / 12);
       this.sents = this.sents.concat(res.results);
       this.loading_sents = false;
@@ -199,6 +216,9 @@ export default {
     log() {
       console.log("adding example", this.selected_example);
       this.dialog = !this.dialog;
+    },
+    stats() {
+      this.statdialog = !this.statdialog;
     },
     scrolling(e) {
       console.log(e.target.scrollTop);
