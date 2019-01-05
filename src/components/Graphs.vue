@@ -29,7 +29,10 @@
         <v-flex v-for="(d, i) in datacollections" :key="i" xs4>
           <v-hover>
             <v-card slot-scope="{ hover }" :class="`elevation-${hover ? 10 : 0}`">
-              <v-card-title class="primary white--text headline">{{ d.categ }}</v-card-title>
+              <v-card-title class="primary white--text headline">
+                <v-flex class="text-xs-center">{{ d.categ }}</v-flex>
+              </v-card-title>
+
               <template>
                 <v-spacer></v-spacer>
                 <line-chart :chart-data="d"></line-chart>
@@ -66,88 +69,52 @@ export default {
       meaning: "None",
       show: false,
       loading: false,
-      error: false
+      error: false,
+      sents: []
     };
   },
   mounted() {
+    // this.sents = ["من"];
     this.getDataFromQuery();
-    console.log("mounted with ", this.datacollections);
+    // console.log("mounted with ", this.datacollections);
   },
 
   methods: {
     async getDataFromQuery() {
       this.loading = true;
+      const dict = {};
       try {
-        this.stats = await $backend.$getStatisticsById(this.word_id);
-        if (!_.isEmpty(this.stats)) {
-          const k = Object.keys(this.stats);
-          this.meaning = this.id;
-          const dict = {};
-
-          if (!this.meaning_id) {
-            const inner_dict = [...Array(k.length - 1)];
-            for (let i = 0; i < k.length - 1; i++) {
-              inner_dict[i] = {};
-              const eras = this.stats[k[i]]["stats"];
-              this.labels = this.stats["ordered_eras"];
-              const categories = Object.keys(eras[this.labels[0]]);
-              // const categsCount ;
-
-              for (var key in categories) {
-                inner_dict[i][categories[key]] = [];
-                for (var key2 in eras) {
-                  // console.log(categories[key]); // Category
-                  // console.log(key2); // Era
-                  // console.log(eras[key2][categories[key]]); Category in that era
-                  inner_dict[i][categories[key]].push(
-                    eras[key2][categories[key]]
-                  );
-                }
-              }
-              // console.log("this is inner at %d ", i, inner_dict);
-            }
-
-            for (var cat in inner_dict[0]) {
-              var datas = [];
-              for (let i = 0; i < k.length - 1; i++) {
-                // console.log("this is inner ", inner_dict[i][cat]);
-
-                var col =
-                  "#" + Math.floor(Math.random() * 16777215).toString(16);
-                datas.push({
-                  label: this.stats[k[i]]["meaning"],
-                  borderColor: col,
-                  fill: false,
-                  lineTension: 0.1,
-                  borderWidth: 5,
-                  data: inner_dict[i][cat]
-                });
-              }
-              this.datacollections.push({
-                categ: cat,
-                labels: this.labels,
-                datasets: datas
-              });
-            }
-          } else {
-            var index = 0;
-            for (let i = 0; i < k.length; i++) {
-              if (k[i] == this.meaning_id) {
-                index = i;
-              }
-            }
-            const eras = this.stats[k[index]]["stats"];
+        if (this.sents.length > 0) {
+          this.stats = await $backend.$getStatisticsSentsByWords(this.sents);
+          if (!_.isEmpty(this.stats)) {
+            const eras = this.stats["stats"];
             this.labels = this.stats["ordered_eras"];
-            const categories = Object.keys(eras[this.labels[0]]);
+            const tmpLabels = [];
 
+            const categories = [];
+            for (var k in eras) {
+              var tmp = eras[k];
+              if (!tmpLabels.includes(k)) tmpLabels.push(k);
+              for (var k2 in tmp) {
+                if (!categories.includes(k2)) categories.push(k2);
+              }
+            }
+            this.labels = this.labels.filter(x => tmpLabels.includes(x));
             // const categsCount ;
             for (var key in categories) {
-              dict[categories[key]] = [];
+              dict[categories[key]] = [...Array(this.labels.length).fill(0)];
               for (var key2 in eras) {
                 // console.log(categories[key]); // Category
                 // console.log(key2); // Era
                 // console.log(eras[key2][categories[key]]); Category in that era
-                dict[categories[key]].push(eras[key2][categories[key]]);
+                if (categories[key] in eras[key2])
+                  dict[categories[key]].splice(
+                    this.labels.indexOf(key2),
+                    1,
+                    eras[key2][categories[key]]
+                  );
+                //push(eras[key2][categories[key]]);
+                else dict[categories[key]].push(0);
               }
               // console.log(this.dict);
             }
@@ -159,15 +126,121 @@ export default {
                 labels: this.labels,
                 datasets: [
                   {
-                    label: this.stats[this.meaning_id]["meaning"],
+                    label: cat,
                     borderColor: col,
                     fill: false,
-                    lineTension: 0.1,
+                    lineTension: 0.2,
                     borderWidth: 5,
                     data: dict[cat]
                   }
                 ]
               });
+            }
+          }
+        } else {
+          this.stats = await $backend.$getStatisticsById(this.word_id);
+
+          if (!_.isEmpty(this.stats)) {
+            const k = Object.keys(this.stats);
+            this.meaning = this.id;
+            this.labels = this.stats["ordered_eras"];
+
+            if (!this.meaning_id) {
+              const inner_dict = [...Array(k.length - 1)];
+              for (let i = 0; i < k.length - 1; i++) {
+                inner_dict[i] = {};
+                const eras = this.stats[k[i]]["stats"];
+                // eras.sort(function(a, b) {
+                //   this.labels.indexOf(a) - this.labels.indexOf(b);
+                // });
+                const categories = Object.keys(eras[this.labels[0]]);
+                // const categsCount ;
+
+                for (var key in categories) {
+                  inner_dict[i][categories[key]] = [
+                    ...Array(this.labels.length).fill(0)
+                  ];
+
+                  for (var key2 in eras) {
+                    // console.log(categories[key]); // Category
+                    // console.log(key2); // Era
+                    // console.log(eras[key2][categories[key]]); Category in that era
+                    inner_dict[i][categories[key]].splice(
+                      this.labels.indexOf(key2),
+                      1,
+                      eras[key2][categories[key]]
+                    );
+                  }
+                }
+                // console.log("this is inner at %d ", i, inner_dict);
+              }
+
+              for (var cat in inner_dict[0]) {
+                var datas = [];
+                for (let i = 0; i < k.length - 1; i++) {
+                  // console.log("this is inner ", inner_dict[i][cat]);
+
+                  var col =
+                    "#" + Math.floor(Math.random() * 16777215).toString(16);
+                  datas.push({
+                    label: this.stats[k[i]]["meaning"],
+                    borderColor: col,
+                    fill: false,
+                    lineTension: 0.1,
+                    borderWidth: 5,
+                    data: inner_dict[i][cat]
+                  });
+                }
+                this.datacollections.push({
+                  categ: cat,
+                  labels: this.labels,
+                  datasets: datas
+                });
+              }
+            } else {
+              var index = 0;
+              for (let i = 0; i < k.length; i++) {
+                if (k[i] == this.meaning_id) {
+                  index = i;
+                }
+              }
+              const eras = this.stats[k[index]]["stats"];
+              this.labels = this.stats["ordered_eras"];
+              const categories = Object.keys(eras[this.labels[0]]);
+
+              // const categsCount ;
+              for (var key in categories) {
+                dict[categories[key]] = [...Array(this.labels.length).fill(0)];
+                for (var key2 in eras) {
+                  // console.log(categories[key]); // Category
+                  // console.log(key2); // Era
+                  // console.log(eras[key2][categories[key]]); Category in that era
+                  dict[categories[key]].splice(
+                    this.labels.indexOf(key2),
+                    1,
+                    eras[key2][categories[key]]
+                  );
+                }
+              }
+              for (var cat in dict) {
+                var col =
+                  "#" + Math.floor(Math.random() * 16777215).toString(16);
+
+                this.datacollections.push({
+                  categ: cat,
+                  labels: this.labels,
+                  datasets: [
+                    {
+                      label: this.stats[this.meaning_id]["meaning"],
+                      borderColor: col,
+                      fill: false,
+                      lineTension: 0.1,
+                      borderWidth: 5,
+                      data: dict[cat]
+                    }
+                  ]
+                });
+              }
             }
           }
         }

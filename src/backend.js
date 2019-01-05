@@ -54,6 +54,18 @@ $backend.$fetchWordAppears = (params) => $backend.get('meaning_appears/', { para
 
 $backend.$getStatisticsById = (word_id) => $backend.get('statistics/word?id=' + word_id, { params: { raw: true } })
 $backend.$getStatisticsByTerm = (word) => $backend.get('statistics/word?t=' + word, { params: { raw: true } })
+$backend.$getStatisticsSentsByWords = (words) => {
+
+  let s = "";
+  for (let i = 0; i < words.length; i++) {
+    console.log("the word is ", words[i])
+    s += words[i] + ","
+  }
+  s = s.slice(0, s.length - 1);
+  return $backend.get('statistics/sent?s=' + s, { params: { raw: true } });
+}
+
+
 
 $backend.$createEntry = (term, meanings, id) => {
   if (typeof id === 'undefined') {

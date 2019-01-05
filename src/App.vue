@@ -108,10 +108,10 @@ export default {
           title: this.$t("message.check"),
           to: "/check"
         },
-        { 
-          icon: "fa fa-chart-bar", 
-          title: this.$t("message.graphs"), 
-          to: "/graphs"
+        {
+          icon: "fa fa-chart-bar",
+          title: this.$t("message.graphs"),
+          to: "/dashboard"
         },
         {
           icon: "fa fa-info-circle",
