@@ -53,8 +53,8 @@
             <!-- <v-btn router :to="'dashboard'" block>{{ $t('message.stats' ) }}</v-btn> -->
             <v-btn @click="stats" block>{{ $t('message.stats' ) }}</v-btn>
 
-            <v-dialog scrollable lazy v-model="statsShow" v-if="statsShow">
-              <v-card>
+            <v-dialog light scrollable lazy v-model="statsShow" v-if="statsShow">
+              <v-card color="#FAFAFA">
                 <v-toolbar>
                   <v-icon>mdi-cursor-text</v-icon>
                   <v-toolbar-title>{{ $t('message.stats') }}</v-toolbar-title>
@@ -122,5 +122,8 @@ export default {
 <style scoped>
 .v-card {
   border-radius: 10px;
+}
+.v-dialog-custom {
+  background-color: black;
 }
 </style>
