@@ -2,8 +2,8 @@
 
 <template>
   <v-container fluid grid-list-md>
-    <v-layout row wrap align-center>
-      <v-flex d-flex xs4>
+    <v-layout row wrap align-center justify-space-around>
+      <v-flex xs3 pa-2>
         <StatCard
           :title="message.words"
           :color="'green'"
@@ -12,7 +12,7 @@
         ></StatCard>
         <v-spacer></v-spacer>
       </v-flex>
-      <v-flex d-flex xs4>
+      <v-flex xs3 pa-2>
         <StatCard
           :title="message.wordsAvg"
           :color="'orange'"
@@ -21,7 +21,7 @@
         ></StatCard>
         <v-spacer></v-spacer>
       </v-flex>
-      <v-flex d-flex xs4>
+      <v-flex xs3 pa-2>
         <StatCard
           :title="message.wordsInDico"
           :color="'purple'"
@@ -30,7 +30,7 @@
         ></StatCard>
         <v-spacer></v-spacer>
       </v-flex>
-      <v-flex d-flex xs5 mt-5>
+      <v-flex xs3 pa-2>
         <StatCard
           :title="message.types"
           :color="'cyan'"
