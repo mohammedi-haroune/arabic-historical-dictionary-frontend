@@ -27,10 +27,11 @@
 
     <v-card-text class="pt-1">
       <div class="title font-weight-light mb-2">{{this.title}}</div>
-
+      <!--
       <v-divider class="my-2"></v-divider>
       <v-icon class="mr-2" small>mdi-clock</v-icon>
       <span class="caption grey--text font-weight-light">last registration 26 minutes ago</span>
+      -->
     </v-card-text>
   </v-card>
 </template>
@@ -60,7 +61,7 @@ export default {
 <style>
 .v-sheet--offset {
   top: -40px;
-  right: 355%;
+  right: 250%;
   position: relative;
 }
 .v-sheet {
