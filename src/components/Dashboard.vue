@@ -11,7 +11,7 @@
       <v-flex text-xs-center>
         <v-alert v-if="error" :value="error" type="error" outline>{{ $t('message.error') }}</v-alert>
         <v-alert
-          :value="!loading && !error && this.stats === undefined"
+          :value="!loading && !error && empty"
           type="warning"
           outline
         >{{ $t('message.no_data') }}</v-alert>
@@ -26,7 +26,7 @@
       </v-flex>
     </v-layout>
     <v-layout row wrap align-center justify-space-around>
-      <template v-if="!error && !loading">
+      <template v-if="!error && !loading && !empty">
         <v-flex xs3 pa-2>
           <StatCard
             :title="message.words"
@@ -82,6 +82,7 @@
 
 <script>
 // Vue.use(require('vue-chartist'))
+import _ from 'lodash'
 import StatCard from "../components/StatCard";
 import $backend from "../backend";
 
@@ -113,6 +114,11 @@ export default {
       labels: ["12am", "3am", "6am", "9am", "12pm", "3pm", "6pm", "9pm"],
       value: [200, 675, 410, 390, 310, 460, 250, 240]
     };
+  },
+  computed: {
+    empty: function () {
+      return !this.stats || _.isEmpty(this.stats)
+    }
   },
   mounted() {
     this.getStats();
