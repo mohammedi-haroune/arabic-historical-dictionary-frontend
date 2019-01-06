@@ -50,7 +50,24 @@
             <v-btn router :to="'document/' + doc.id" block>{{ $t('message.content') }}</v-btn>
           </v-flex>
           <v-flex xs6 ma-2>
-            <v-btn router :to="'dashboard'" block>{{ $t('message.stats' ) }}</v-btn>
+            <!-- <v-btn router :to="'dashboard'" block>{{ $t('message.stats' ) }}</v-btn> -->
+            <v-btn @click="stats" block>{{ $t('message.stats' ) }}</v-btn>
+
+            <v-dialog scrollable lazy v-model="statsShow" v-if="statsShow">
+              <v-card>
+                <v-toolbar>
+                  <v-icon>mdi-cursor-text</v-icon>
+                  <v-toolbar-title>{{ $t('message.stats') }}</v-toolbar-title>
+                  <v-spacer></v-spacer>
+                  <v-btn icon @click="statsShow = false">
+                    <v-icon color="red">close</v-icon>
+                  </v-btn>
+                </v-toolbar>
+                <v-card-text>
+                  <Dashboard :doc="doc"></Dashboard>
+                </v-card-text>
+              </v-card>
+            </v-dialog>
           </v-flex>
         </v-layout>
       </v-card-actions>
@@ -59,8 +76,10 @@
 </template>
 
 <script>
+import Dashboard from "../components/Dashboard";
 export default {
   name: "DocumentSample",
+  components: { Dashboard },
   props: {
     doc: Object
   },

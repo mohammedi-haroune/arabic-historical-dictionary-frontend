@@ -30,7 +30,7 @@
         ></StatCard>
         <v-spacer></v-spacer>
       </v-flex>
-      <v-flex d-flex xs5 mt-4>
+      <v-flex d-flex xs5 mt-5>
         <StatCard
           :title="message.types"
           :color="'cyan'"
@@ -63,7 +63,8 @@ import $backend from "../backend";
 export default {
   components: { StatCard },
   props: {
-    fileId: String
+    doc: Object,
+    name: "Dashboard"
   },
   data() {
     return {
@@ -88,13 +89,12 @@ export default {
   },
   mounted() {
     this.getStats();
-    console.log("this is res ", this.stats);
+    console.log("this is fileid ", this.doc);
   },
   methods: {
     async getStats() {
       let fid = "Jahiliy/شعر/أحار بن عمرو كأني خمر.xml";
       // const res = await $backend.$getStatisticsByFileId(fid);
-      console.log("this is res ", res);
       const res = {
         num_words: 356666,
         num_chars: 1456,
@@ -102,6 +102,7 @@ export default {
         num_types: 307,
         doc_size: 12727
       };
+      console.log("this is res ", res);
       const max = 2e12;
       this.stats.words =
         res["num_words"] < max
@@ -109,6 +110,7 @@ export default {
           : res["num_words"].toExponential();
 
       const tmp = Number(res["num_chars"] / res["num_words"]).toFixed(5);
+
       this.stats.wordsAvg = tmp < 2e7 ? tmp : tmp.toExponential();
 
       this.stats.types =

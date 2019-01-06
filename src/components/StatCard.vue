@@ -44,16 +44,10 @@ export default {
     stat: Number,
     color: String,
     icon: String,
-    stats: Number
+    stats: String
   },
   data() {
     return {
-      stats: {
-        words: 0,
-        wordsAvg: 0,
-        types: 0,
-        wordsInDico: 0
-      },
       labels: ["A", "B", "C"],
       series: [[1, 3, 2], [4, 6, 5]],
       lorem: `Lorem ipsum dolor sit amet, mel at clita quando. Te sit oratio vituperatoribus, nam ad ipsum posidonium mediocritatem, explicari dissentiunt cu mea. Repudiare disputationi vim in, mollis iriure nec cu, alienum argumentum ius ad. Pri eu justo aeque torquatos.`
