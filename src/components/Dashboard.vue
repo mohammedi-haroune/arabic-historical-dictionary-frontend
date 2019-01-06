@@ -93,15 +93,15 @@ export default {
   },
   methods: {
     async getStats() {
-      let fid = "Jahiliy/شعر/أحار بن عمرو كأني خمر.xml";
-      // const res = await $backend.$getStatisticsByFileId(fid);
-      const res = {
-        num_words: 356666,
-        num_chars: 1456,
-        num_words_dico: 166,
-        num_types: 307,
-        doc_size: 12727
-      };
+      // let fid = "Jahiliy/شعر/أحار بن عمرو كأني خمر.xml";
+      const res = await $backend.$getStatisticsByFileId(this.doc.id);
+      // const res = {
+      //   num_words: 356666,
+      //   num_chars: 1456,
+      //   num_words_dico: 166,
+      //   num_types: 307,
+      //   doc_size: 12727
+      // };
       console.log("this is res ", res);
       const max = 2e12;
       this.stats.words =

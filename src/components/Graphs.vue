@@ -71,14 +71,10 @@ export default {
       show: false,
       loading: false,
       error: false
-      // sents: []
     };
   },
   mounted() {
-    this.sents = this.sents.sents[0].sentence.split(" ");
-    // console.log("sents are", this.sents.sents[0].sentence.split(" "));
     this.getDataFromQuery();
-    // console.log("mounted with ", this.datacollections);
   },
 
   methods: {
@@ -86,7 +82,9 @@ export default {
       this.loading = true;
       const dict = {};
       try {
-        if (this.sents.length > 0) {
+        if (this.sents) {
+          this.sents = this.sents.sents[0].sentence.split(" ");
+
           this.stats = await $backend.$getStatisticsSentsByWords(this.sents);
           if (!_.isEmpty(this.stats)) {
             const eras = this.stats["stats"];
@@ -102,7 +100,6 @@ export default {
               }
             }
             this.labels = this.labels.filter(x => tmpLabels.includes(x));
-            // const categsCount ;
             for (var key in categories) {
               dict[categories[key]] = [...Array(this.labels.length).fill(0)];
               for (var key2 in eras) {
@@ -115,10 +112,8 @@ export default {
                     1,
                     eras[key2][categories[key]]
                   );
-                //push(eras[key2][categories[key]]);
                 else dict[categories[key]].push(0);
               }
-              // console.log(this.dict);
             }
             for (var cat in dict) {
               var col = "#" + Math.floor(Math.random() * 16777215).toString(16);
@@ -152,11 +147,7 @@ export default {
               for (let i = 0; i < k.length - 1; i++) {
                 inner_dict[i] = {};
                 const eras = this.stats[k[i]]["stats"];
-                // eras.sort(function(a, b) {
-                //   this.labels.indexOf(a) - this.labels.indexOf(b);
-                // });
                 const categories = Object.keys(eras[this.labels[0]]);
-                // const categsCount ;
 
                 for (var key in categories) {
                   inner_dict[i][categories[key]] = [
@@ -174,14 +165,11 @@ export default {
                     );
                   }
                 }
-                // console.log("this is inner at %d ", i, inner_dict);
               }
 
               for (var cat in inner_dict[0]) {
                 var datas = [];
                 for (let i = 0; i < k.length - 1; i++) {
-                  // console.log("this is inner ", inner_dict[i][cat]);
-
                   var col =
                     "#" + Math.floor(Math.random() * 16777215).toString(16);
                   datas.push({
@@ -210,7 +198,6 @@ export default {
               this.labels = this.stats["ordered_eras"];
               const categories = Object.keys(eras[this.labels[0]]);
 
-              // const categsCount ;
               for (var key in categories) {
                 dict[categories[key]] = [...Array(this.labels.length).fill(0)];
                 for (var key2 in eras) {
@@ -252,30 +239,6 @@ export default {
       }
       this.loading = false;
     }
-
-    // getDummyData() {
-    //   var dummy_data = [];
-    //   var colors = [];
-    //   for (let i = 0; i < 2; i++) {
-    //     var random = [];
-    //     random[0] = Math.random() * (100 - 0) + 20;
-    //     for (let j = 1; j < this.labels.length; j++) {
-    //       random.push(Math.random() * (100 - random[j - 1]) + 20);
-    //     }
-
-    //     var col = "#" + Math.floor(Math.random() * 16777215).toString(16);
-
-    //     dummy_data.push({
-    //       label: "Meaning " + i,
-    //       borderColor: col,
-    //       fill: false,
-    //       lineTension: 0.1,
-    //       borderWidth: 1.5,
-    //       data: random
-    //     });
-    //   }
-    //   return dummy_data;
-    // }
   }
 };
 </script>

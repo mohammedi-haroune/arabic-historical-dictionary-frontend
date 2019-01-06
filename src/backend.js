@@ -54,7 +54,7 @@ $backend.$fetchWordAppears = (params) => $backend.get('meaning_appears/', { para
 
 $backend.$getStatisticsById = (word_id) => $backend.get('statistics/word?id=' + word_id, { params: { raw: true } })
 $backend.$getStatisticsByTerm = (word) => $backend.get('statistics/word?t=' + word, { params: { raw: true } })
-$backend.$getStatisticsByFileId = (fileid) => $backend.get('statistics/doc?fileid=' + fileid)
+$backend.$getStatisticsByFileId = (fileid) => $backend.get('statistics/doc?id=' + fileid)
 $backend.$getStatisticsSentsByWords = (words) => {
 
   let s = "";
