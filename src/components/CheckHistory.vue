@@ -222,6 +222,7 @@ export default {
     },
     async submit () {
       this.loading_submit = true
+      this.error_submit = false
       try {
         await Promise.all(this.deleted.map(appears => $backend.$deleteAppears(appears.id)))
         await Promise.all(this.appears_set.map(appears => $backend.$putAppears(appears.id, appears)))
