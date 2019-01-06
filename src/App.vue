@@ -35,7 +35,7 @@
     <v-toolbar fixed>
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
     </v-toolbar>
-    <v-toolbar fixed app>
+    <v-toolbar fixed app class="white elevation-0">
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
       <v-btn icon @click.native.stop="miniVariant = !miniVariant">
         <v-icon v-html="chevron"></v-icon>

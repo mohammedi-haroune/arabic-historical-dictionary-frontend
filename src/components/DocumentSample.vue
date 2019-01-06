@@ -50,7 +50,7 @@
             <v-btn router :to="'document/' + doc.id" block>{{ $t('message.content') }}</v-btn>
           </v-flex>
           <v-flex xs6 ma-2>
-            <v-btn block>{{ $t('message.stats' ) }}</v-btn>
+            <v-btn router :to="'dashboard'" block>{{ $t('message.stats' ) }}</v-btn>
           </v-flex>
         </v-layout>
       </v-card-actions>
@@ -66,6 +66,7 @@ export default {
   },
   data() {
     return {
+      statsShow: false,
       items: [
         {
           title: "message.period",
@@ -90,6 +91,11 @@ export default {
         }
       ]
     };
+  },
+  methods: {
+    stats() {
+      this.statsShow = !this.statsShow;
+    }
   }
 };
 </script>

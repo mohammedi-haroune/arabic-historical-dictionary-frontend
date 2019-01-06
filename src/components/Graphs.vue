@@ -87,7 +87,6 @@ export default {
       const dict = {};
       try {
         if (this.sents.length > 0) {
-          console.log("EHJSHJZEH");
           this.stats = await $backend.$getStatisticsSentsByWords(this.sents);
           if (!_.isEmpty(this.stats)) {
             const eras = this.stats["stats"];
