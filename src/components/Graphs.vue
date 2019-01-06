@@ -66,7 +66,6 @@ export default {
       datacollections: [],
       labels: [],
       stats: {},
-      show: false,
       meaning: "None",
       show: false,
       loading: false,

@@ -1,53 +1,78 @@
-
+<i18n>
+  ar:
+    message:
+      error: "حدث خطأ"
+      no_data: "غير متوفر"
+</i18n>
 
 <template>
   <v-container fluid grid-list-md>
+    <v-layout row wrap>
+      <v-flex text-xs-center>
+        <v-alert v-if="error" :value="error" type="error" outline>{{ $t('message.error') }}</v-alert>
+        <v-alert
+          :value="!loading && !error && this.stats === undefined"
+          type="warning"
+          outline
+        >{{ $t('message.no_data') }}</v-alert>
+        <v-progress-circular
+          class="text-xs-center"
+          v-if="loading"
+          :size="70"
+          :width="7"
+          color="primary"
+          indeterminate
+        ></v-progress-circular>
+      </v-flex>
+    </v-layout>
     <v-layout row wrap align-center justify-space-around>
-      <v-flex xs3 pa-2>
-        <StatCard
-          :title="message.words"
-          :color="'green'"
-          :icon="'fa-file-contract'"
-          :stats="stats['words']"
-        ></StatCard>
-        <v-spacer></v-spacer>
-      </v-flex>
-      <v-flex xs3 pa-2>
-        <StatCard
-          :title="message.wordsAvg"
-          :color="'orange'"
-          :icon="'fa-chart-bar'"
-          :stats="stats['wordsAvg']"
-        ></StatCard>
-        <v-spacer></v-spacer>
-      </v-flex>
-      <v-flex xs3 pa-2>
-        <StatCard
-          :title="message.wordsInDico"
-          :color="'purple'"
-          :icon="'fa-book'"
-          :stats="stats['wordsInDico']"
-        ></StatCard>
-        <v-spacer></v-spacer>
-      </v-flex>
-      <v-flex xs3 pa-2>
+      <template v-if="!error && !loading">
+        <v-flex xs3 pa-2>
+          <StatCard
+            :title="message.words"
+            :color="'green'"
+            :icon="'fa-file-contract'"
+            :stats="stats['words']"
+          ></StatCard>
+          <v-spacer></v-spacer>
+        </v-flex>
+        <v-flex xs3 pa-2>
+          <StatCard
+            :title="message.wordsAvg"
+            :color="'orange'"
+            :icon="'fa-chart-bar'"
+            :stats="stats['wordsAvg']"
+          ></StatCard>
+          <v-spacer></v-spacer>
+        </v-flex>
+        <v-flex xs3 pa-2>
+          <StatCard
+            :title="message.wordsInDico"
+            :color="'purple'"
+            :icon="'fa-book'"
+            :stats="stats['wordsInDico']"
+          ></StatCard>
+          <v-spacer></v-spacer>
+        </v-flex>
+        <v-flex xs3 pa-2>
+          <StatCard
+            :title="message.types"
+            :color="'cyan'"
+            :icon="'fa-file-word'"
+            :stats="stats['types']"
+          ></StatCard>
+          <v-spacer></v-spacer>
+        </v-flex>
+        <!-- <v-flex 5 d-flex xs1 mt-4>
         <StatCard
           :title="message.types"
           :color="'cyan'"
           :icon="'fa-file-word'"
-          :stats="stats['types']"
-        ></StatCard>
-        <v-spacer></v-spacer>
-      </v-flex>
-      <!-- <v-flex 5 d-flex xs1 mt-4>
-        <StatCard
-          :title="message.types"
-          :color="'cyan'"
-          :icon="'fa-file-word'"
           :stats="stats['wordsAvg']"
         ></StatCard>
         <v-spacer></v-spacer>
-      </v-flex>-->
+        </v-flex>-->
+      </template>
     </v-layout>
   </v-container>
 </template>
@@ -68,6 +93,8 @@ export default {
   },
   data() {
     return {
+      loading: false,
+      error: false,
       message: {
         words: "عدد الكلمات",
         wordsAvg: "متوسط طول الكلمات",
@@ -93,34 +120,41 @@ export default {
   },
   methods: {
     async getStats() {
-      // let fid = "Jahiliy/شعر/أحار بن عمرو كأني خمر.xml";
-      const res = await $backend.$getStatisticsByFileId(this.doc.id);
-      // const res = {
-      //   num_words: 356666,
-      //   num_chars: 1456,
-      //   num_words_dico: 166,
-      //   num_types: 307,
-      //   doc_size: 12727
-      // };
-      console.log("this is res ", res);
-      const max = 2e12;
-      this.stats.words =
-        res["num_words"] < max
-          ? res["num_words"]
-          : res["num_words"].toExponential();
+      this.loading = true;
+      try {
+        // let fid = "Jahiliy/شعر/أحار بن عمرو كأني خمر.xml";
+        const res = await $backend.$getStatisticsByFileId(this.doc.id);
+        // const res = {
+        //   num_words: 356666,
+        //   num_chars: 1456,
+        //   num_words_dico: 166,
+        //   num_types: 307,
+        //   doc_size: 12727
+        // };
+        console.log("this is res ", res);
+        const max = 2e12;
+        this.stats.words =
+          res["num_words"] < max
+            ? res["num_words"]
+            : res["num_words"].toExponential();
 
-      const tmp = Number(res["num_chars"] / res["num_words"]).toFixed(5);
+        const tmp = Number(res["num_chars"] / res["num_words"]).toFixed(5);
 
-      this.stats.wordsAvg = tmp < 2e7 ? tmp : tmp.toExponential();
+        this.stats.wordsAvg = tmp < 2e7 ? tmp : tmp.toExponential();
 
-      this.stats.types =
-        res["num_types"] < max
-          ? res["num_types"]
-          : res["num_types"].toExponential();
-      this.stats.wordsInDico =
-        res["num_words_dico"] < max
-          ? res["num_words_dico"]
-          : res["num_words_dico"].toExponential();
+        this.stats.types =
+          res["num_types"] < max
+            ? res["num_types"]
+            : res["num_types"].toExponential();
+        this.stats.wordsInDico =
+          res["num_words_dico"] < max
+            ? res["num_words_dico"]
+            : res["num_words_dico"].toExponential();
+      } catch (err) {
+        console.error(err);
+        this.error = true;
+      }
+      this.loading = false;
     }
   }
 };
