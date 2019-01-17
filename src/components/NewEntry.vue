@@ -181,7 +181,7 @@
           </v-flex>-->
           <v-flex xs1>
             <v-dialog v-model="dialog" scrollable max-width="600px" :disabled="example.sents.length === 0">
-              <v-btn icon slot="activator" :disabled="example.sents.length === 0 || example.loading_sents" :loading="example.loading_sents">
+              <v-btn v-if="!inserting_example" icon slot="activator" :disabled="example.sents.length === 0 || example.loading_sents" :loading="example.loading_sents">
                 <v-icon meduim>fa fa-list</v-icon>
               </v-btn>
               <v-card>
@@ -225,7 +225,7 @@
               <v-card-text>
                   <template v-for="(i, j) in example.sentences">
                       <p :key="i" class="body-2" >
-                        <v-btn icon @click="example.sentences.splice(j, 1)">
+                        <v-btn v-if="!inserting_example" icon @click="example.sentences.splice(j, 1)">
                           <v-icon color="red">delete</v-icon>
                         </v-btn>
                         {{ example.sents[i].sentence }}
