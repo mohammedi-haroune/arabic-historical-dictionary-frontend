@@ -84,6 +84,8 @@ $backend.$createEntry = (term, meanings, id) => {
   }
 }
 
+$backend.$auto_mode = (id) => $backend.get('fill/historicDict', { params: { id: id, batch: 10 } })
+
 $backend.$getPeriodsAndCategories = (params) => $backend.get('search/appears', { params })
 
 export default $backend

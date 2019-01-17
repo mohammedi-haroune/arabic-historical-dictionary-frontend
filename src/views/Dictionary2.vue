@@ -164,7 +164,7 @@
         ></v-pagination>
       </v-flex>
     </v-layout>
-    <v-layout v-if="loading">
+    <v-layout v-if="loading | loading_auto_mode">
       <v-flex pa-5 ma-5 xs10 text-xs-center>
         <v-progress-circular :size="70" :width="7" color="primary" indeterminate></v-progress-circular>
       </v-flex>
@@ -220,7 +220,12 @@
 
             <v-btn small color="secondary lighten-1" v-if="leaf" icon @click="stats(term_id_from_meaning(item.id), item.id)">
               <v-icon>fa fa-chart-bar</v-icon>
+           </v-btn>
+            
+            <v-btn small color="primary lighten-1" v-if="!leaf" icon @click="auto_mode(item.id)">
+              <v-icon>fa fa-clock</v-icon>
             </v-btn>
+            
           </template>
           <template slot="append" slot-scope="{ item, open, leaf }">
             <v-btn
@@ -284,7 +289,8 @@ export default {
       selectedPeriods: [],
       selectedCategories: [],
       clicked: false,
-      loading: false
+      loading: false,
+      loading_auto_mode: false,
     };
   },
   mounted() {
@@ -329,6 +335,14 @@ export default {
       this.selected_id = word_id;
       this.selected_meaning_id = meaning_id;
       this.dialog_stats = true;
+    },
+    async auto_mode(term) {
+      console.log("term", term)
+      this.selected_term = term
+      this.loading_auto_mode = true
+      await $backend.$auto_mode(term)
+      
+      this.loading_auto_mode = false
     },
     history(id) {
       console.log("meaning_id", id);
