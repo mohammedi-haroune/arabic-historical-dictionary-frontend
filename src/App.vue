@@ -96,7 +96,7 @@ export default {
           title: this.$t("message.graphs"),
           to: "/dashboard"
         },
-        { icon: "create", title: this.$t("message.corpus"), to: "/corpus" },
+        // { icon: "create", title: this.$t("message.corpus"), to: "/corpus" },
         { icon: "explore", title: this.$t("message.browser"), to: "/browser" },
         { icon: "edit", title: this.$t("message.add_entry"), to: "/entry" },
         {

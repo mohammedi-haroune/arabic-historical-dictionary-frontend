@@ -3,7 +3,9 @@
     <template>
       <PieChart :data="data"></PieChart>
     </template>
-    <v-card-text :class="'title font-weight-bold mb-2 cyan lighten-1  white--text '">{{this.text}}</v-card-text>
+    <v-card-text
+      :class="'title font-weight-bold mb-2  lighten-1  dark--text text-md-center '"
+    >{{this.text}}</v-card-text>
   </v-card>
 </template>
 

@@ -1,5 +1,5 @@
 <template>
-  <v-card class="mx-auto my-5" height="200">
+  <v-card class="mx-auto my-5" max-width="300" height="200">
     <v-container grid-list-md text-xs-center>
       <v-layout>
         <v-flex xs2>

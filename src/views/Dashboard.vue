@@ -38,7 +38,7 @@
           <PieChartCard :data="charsData[1]" :text="message.size_docs_per_era"></PieChartCard>
         </v-flex>
 
-        <v-flex xs4 pa-2>
+        <v-flex xs5 pa-2>
           <StatCard
             :title="message.num_docs"
             :color="'green'"
@@ -48,17 +48,17 @@
           <v-spacer></v-spacer>
         </v-flex>
 
-        <v-flex xs4 pa-2>
+        <v-flex xs5 pa-2>
           <StatCard
             :title="message.docs_size"
-            :color="'green'"
-            :icon="'fa-file-alt'"
+            :color="'purple'"
+            :icon="'fa-database'"
             :stats="stats['docs_size']+''"
           ></StatCard>
           <v-spacer></v-spacer>
         </v-flex>
 
-        <v-flex xs4 pa-2>
+        <v-flex xs5 pa-2>
           <StatCard
             :title="message.avg_size"
             :color="'orange'"
@@ -67,7 +67,7 @@
           ></StatCard>
           <v-spacer></v-spacer>
         </v-flex>
-        <v-flex xs4 pa-2>
+        <!-- <v-flex xs5 pa-2>
           <StatCard
             :title="message.periods_count"
             :color="'purple'"
@@ -75,8 +75,8 @@
             :stats="stats['periods_count']+''"
           ></StatCard>
           <v-spacer></v-spacer>
-        </v-flex>
-        <v-flex xs4 pa-2>
+        </v-flex>-->
+        <v-flex xs5 pa-2>
           <StatCard
             :title="message.num_categ"
             :color="'cyan'"
