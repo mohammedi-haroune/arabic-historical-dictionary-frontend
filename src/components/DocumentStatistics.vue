@@ -32,7 +32,7 @@
             :title="message.words"
             :color="'green'"
             :icon="'fa-file-contract'"
-            :stats="stats['words']"
+            :stats="stats['words']+''"
           ></StatCard>
           <v-spacer></v-spacer>
         </v-flex>
@@ -41,7 +41,7 @@
             :title="message.wordsAvg"
             :color="'orange'"
             :icon="'fa-chart-bar'"
-            :stats="stats['wordsAvg']"
+            :stats="stats['wordsAvg']+''"
           ></StatCard>
           <v-spacer></v-spacer>
         </v-flex>
@@ -50,7 +50,7 @@
             :title="message.wordsInDico"
             :color="'purple'"
             :icon="'fa-book'"
-            :stats="stats['wordsInDico']"
+            :stats="stats['wordsInDico']+''"
           ></StatCard>
           <v-spacer></v-spacer>
         </v-flex>
@@ -59,7 +59,7 @@
             :title="message.types"
             :color="'cyan'"
             :icon="'fa-file-word'"
-            :stats="stats['types']"
+            :stats="stats['types']+''"
           ></StatCard>
           <v-spacer></v-spacer>
         </v-flex>
@@ -82,7 +82,7 @@
 
 <script>
 // Vue.use(require('vue-chartist'))
-import _ from 'lodash'
+import _ from "lodash";
 import StatCard from "../components/StatCard";
 import $backend from "../backend";
 
@@ -90,7 +90,7 @@ export default {
   components: { StatCard },
   props: {
     doc: Object,
-    name: "Dashboard"
+    name: "DocumentStatistics"
   },
   data() {
     return {
@@ -107,17 +107,12 @@ export default {
         wordsAvg: 0,
         types: 0,
         wordsInDico: 0
-      },
-      labels: ["A", "B", "C"],
-      series: [[1, 3, 2], [4, 6, 5]],
-      lorem: "yes",
-      labels: ["12am", "3am", "6am", "9am", "12pm", "3pm", "6pm", "9pm"],
-      value: [200, 675, 410, 390, 310, 460, 250, 240]
+      }
     };
   },
   computed: {
-    empty: function () {
-      return !this.stats || _.isEmpty(this.stats)
+    empty: function() {
+      return !this.stats || _.isEmpty(this.stats);
     }
   },
   mounted() {

@@ -86,10 +86,16 @@ export default {
         "red lighten-1",
         "green lighten-1",
         "blue lighten-1",
-        "amber lighten-1"
+        "amber lighten-1",
+        "cyan lighten-1"
       ],
       items: [
         { icon: "apps", title: this.$t("message.welcome"), to: "/welcome" },
+        {
+          icon: "fa fa-chart-bar",
+          title: this.$t("message.graphs"),
+          to: "/dashboard"
+        },
         { icon: "create", title: this.$t("message.corpus"), to: "/corpus" },
         { icon: "explore", title: this.$t("message.browser"), to: "/browser" },
         { icon: "edit", title: this.$t("message.add_entry"), to: "/entry" },
@@ -108,11 +114,7 @@ export default {
           title: this.$t("message.check"),
           to: "/check"
         },
-        // {
-        //   icon: "fa fa-chart-bar",
-        //   title: this.$t("message.graphs"),
-        //   to: "/dashboard"
-        // },
+
         {
           icon: "fa fa-info-circle",
           title: this.$t("message.about"),

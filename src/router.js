@@ -26,6 +26,7 @@ export default new Router({
     route('dictionary'),
     route('dictionary2'),
     route('graphs'),
+    // route('documentStatistics'),
     route('dashboard'),
     { path: '/document/:id', component: resolve => import('./views/Document.vue').then(resolve) },
     { path: '/check/:meaning_id', component: resolve => import('./views/Check.vue').then(resolve) },

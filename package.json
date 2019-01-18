@@ -14,6 +14,7 @@
     "axiom": "^0.1.6",
     "axios": "^0.18.0",
     "chart.js": "^2.7.3",
+    "distinct-colors": "^1.0.4",
     "element-ui": "^2.4.11",
     "lodash": "^4.17.11",
     "material-design-icons-iconfont": "^3.0.3",

@@ -64,7 +64,7 @@
                   </v-btn>
                 </v-toolbar>
                 <v-card-text>
-                  <Dashboard :doc="doc"></Dashboard>
+                  <DocumentStatistics :doc="doc"></DocumentStatistics>
                 </v-card-text>
               </v-card>
             </v-dialog>
@@ -76,10 +76,10 @@
 </template>
 
 <script>
-import Dashboard from "../components/Dashboard";
+import DocumentStatistics from "../components/DocumentStatistics";
 export default {
   name: "DocumentSample",
-  components: { Dashboard },
+  components: { DocumentStatistics },
   props: {
     doc: Object
   },
