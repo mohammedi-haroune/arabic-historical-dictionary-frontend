@@ -43,7 +43,7 @@
             :title="message.num_docs"
             :color="'green'"
             :icon="'fa-file-alt'"
-            :stats="stats['num_docs']+''"
+            :stats="stats['num_docs']+' ملف'"
           ></StatCard>
           <v-spacer></v-spacer>
         </v-flex>

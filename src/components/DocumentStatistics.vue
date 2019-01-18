@@ -32,7 +32,7 @@
             :title="message.words"
             :color="'green'"
             :icon="'fa-file-contract'"
-            :stats="stats['words']+''"
+            :stats="stats['words']+' كلمة'"
           ></StatCard>
           <v-spacer></v-spacer>
         </v-flex>
@@ -41,7 +41,7 @@
             :title="message.wordsAvg"
             :color="'orange'"
             :icon="'fa-chart-bar'"
-            :stats="stats['wordsAvg']+''"
+            :stats="stats['wordsAvg']+' حرف  '"
           ></StatCard>
           <v-spacer></v-spacer>
         </v-flex>
@@ -50,7 +50,7 @@
             :title="message.wordsInDico"
             :color="'purple'"
             :icon="'fa-book'"
-            :stats="stats['wordsInDico']+''"
+            :stats="stats['wordsInDico']+' كلمة'"
           ></StatCard>
           <v-spacer></v-spacer>
         </v-flex>
@@ -59,7 +59,7 @@
             :title="message.types"
             :color="'cyan'"
             :icon="'fa-file-word'"
-            :stats="stats['types']+''"
+            :stats="stats['types']+' كلمة'"
           ></StatCard>
           <v-spacer></v-spacer>
         </v-flex>
