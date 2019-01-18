@@ -38,7 +38,7 @@
           <PieChartCard :data="charsData[1]" :text="message.size_docs_per_era"></PieChartCard>
         </v-flex>
 
-        <v-flex xs5 pa-2>
+        <v-flex xs4 pa-2>
           <StatCard
             :title="message.num_docs"
             :color="'green'"
@@ -47,7 +47,18 @@
           ></StatCard>
           <v-spacer></v-spacer>
         </v-flex>
-        <v-flex xs5 pa-5>
+
+        <v-flex xs4 pa-2>
+          <StatCard
+            :title="message.docs_size"
+            :color="'green'"
+            :icon="'fa-file-alt'"
+            :stats="stats['docs_size']+''"
+          ></StatCard>
+          <v-spacer></v-spacer>
+        </v-flex>
+
+        <v-flex xs4 pa-2>
           <StatCard
             :title="message.avg_size"
             :color="'orange'"
@@ -56,7 +67,7 @@
           ></StatCard>
           <v-spacer></v-spacer>
         </v-flex>
-        <v-flex xs5 pa-5>
+        <v-flex xs4 pa-2>
           <StatCard
             :title="message.periods_count"
             :color="'purple'"
@@ -65,7 +76,7 @@
           ></StatCard>
           <v-spacer></v-spacer>
         </v-flex>
-        <v-flex xs5 pa-5>
+        <v-flex xs4 pa-2>
           <StatCard
             :title="message.num_categ"
             :color="'cyan'"
@@ -118,12 +129,14 @@ export default {
         num_docs: 0,
         avg_size: 0,
         periods_count: 0,
-        num_categ: 0
+        num_categ: 0,
+        docs_size: 0
       },
       loading: false,
       error: false,
       message: {
         num_docs: "عدد الملفات ",
+        docs_size: "حجم كل الملفات",
         avg_size: "متوسط حجم الملفات",
         periods_count: "عدد الفترات الزمنية",
         num_categ: "عدد الأقسام",
@@ -175,6 +188,8 @@ export default {
         this.stats["periods_count"] = Object.keys(res).length - 2;
 
         this.stats["num_categ"] = Object.keys(res[Object.keys(res)[0]]).length;
+
+        this.stats["docs_size"] = this.convertSize(res["size_docs"]);
 
         // First piechart (each era with number of docs )
         var labels = Object.getOwnPropertyNames(res).slice(

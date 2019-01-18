@@ -1,5 +1,5 @@
 <template>
-  <v-card class="mx-auto" max-width="300">
+  <v-card class="mx-auto my-5" height="200">
     <v-container grid-list-md text-xs-center>
       <v-layout>
         <v-flex xs2>
@@ -60,6 +60,6 @@ export default {
   position: relative;
 }
 .v-sheet {
-  border-radius: 5px;
+  border-radius: 8px;
 }
 </style>

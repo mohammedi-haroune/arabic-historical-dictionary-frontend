@@ -85,6 +85,7 @@ export default {
           this.sents = this.sents.sents[0].sentence.split(" ");
 
           this.stats = await $backend.$getStatisticsSentsByWords(this.sents);
+          const global_stats = await $backend.$getStats();
           if (!_.isEmpty(this.stats)) {
             const eras = this.stats["stats"];
             this.labels = this.stats["ordered_eras"];
@@ -105,15 +106,19 @@ export default {
                 // console.log(categories[key]); // Category
                 // console.log(key2); // Era
                 // console.log(eras[key2][categories[key]]); Category in that era
-                if (categories[key] in eras[key2])
+                if (categories[key] in eras[key2]) {
+                  var tmp = global_stats[key2]["size_docs"] / 1024 / 1024;
+                  console.log("temp", tmp);
                   dict[categories[key]].splice(
                     this.labels.indexOf(key2),
                     1,
-                    eras[key2][categories[key]]
+                    Number(eras[key2][categories[key]] / tmp).toFixed(2)
                   );
-                else dict[categories[key]].push(0);
+                } else dict[categories[key]].push(0);
               }
             }
+            console.log(dict);
+
             for (var cat in dict) {
               var col = "#" + Math.floor(Math.random() * 16777215).toString(16);
 
@@ -125,7 +130,6 @@ export default {
                     label: cat,
                     borderColor: col,
                     fill: false,
-                    lineTension: 0.2,
                     borderWidth: 5,
                     data: dict[cat]
                   }
@@ -175,7 +179,7 @@ export default {
                     label: this.stats[k[i]]["meaning"],
                     borderColor: col,
                     fill: false,
-                    lineTension: 0.1,
+
                     borderWidth: 5,
                     data: inner_dict[i][cat]
                   });
@@ -222,7 +226,6 @@ export default {
                       label: this.stats[this.meaning_id]["meaning"],
                       borderColor: col,
                       fill: false,
-                      lineTension: 0.1,
                       borderWidth: 5,
                       data: dict[cat]
                     }
