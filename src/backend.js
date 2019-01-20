@@ -42,16 +42,51 @@ $backend.$getDicts = () => $backend.get('dictionaries/', { params: { entry_set: 
 $backend.$getPostags = () => $backend.get('postags/')
 
 $backend.$getDocument = (id) => $backend.get('documents/' + id, { params: { raw: true } })
-$backend.$getSentences = (id, page = 1) => $backend.get('sentences/', { params: { id, page } })
+$backend.$getSentences = (params) => $backend.get('search/sentences', { params })
+$backend.$getDocumentSentences = (id, page = 1) => $backend.get('sentences/', { params: { id, page } })
 
 $backend.$fetchAppears = (id) => $backend.get('meaning_appears/' + id)
+$backend.$deleteAppears = (id) => $backend.delete('appears/' + id + '/')
+$backend.$putAppears = (id, appears) => $backend.put('appears/' + id + '/', appears)
+$backend.$patchAppears = (id) => $backend.delete('meaning_appears/' + id + '/')
+
 $backend.$fetchWordAppears = (params) => $backend.get('meaning_appears/', { params })
 
-$backend.$createEntry = (term, meanings) =>
-  $backend.post('entries/', {
-    term: term,
-    dictionary: 1,
-    meaning_set: meanings
-  })
+$backend.$getStatisticsById = (word_id) => $backend.get('statistics/word?id=' + word_id, { params: { raw: true } })
+$backend.$getStatisticsByTerm = (word) => $backend.get('statistics/word?t=' + word, { params: { raw: true } })
+$backend.$getStatisticsByFileId = (fileid) => $backend.get('statistics/doc?id=' + fileid)
+$backend.$getStats = () => $backend.get('statistics?refresh=1');
+$backend.$getStatisticsSentsByWords = (words) => {
+
+  let s = "";
+  for (let i = 0; i < words.length; i++) {
+    console.log("the word is ", words[i])
+    s += words[i] + ","
+  }
+  s = s.slice(0, s.length - 1);
+  return $backend.get('statistics/sent?s=' + s, { params: { raw: true } });
+}
+
+
+
+$backend.$createEntry = (term, meanings, id) => {
+  if (typeof id === 'undefined') {
+    return $backend.post('entries/', {
+      term: term,
+      meaning_set: meanings
+    })
+  } else {
+    console.log('seding post requesst with id', id)
+    return $backend.post('entries/', {
+      id: id,
+      term: term,
+      meaning_set: meanings
+    })
+  }
+}
+
+$backend.$auto_mode = (id) => $backend.get('fill/historicDict', { params: { id: id, batch: 10 } })
+
+$backend.$getPeriodsAndCategories = (params) => $backend.get('search/appears', { params })
 
 export default $backend

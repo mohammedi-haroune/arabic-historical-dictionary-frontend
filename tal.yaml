@@ -12,8 +12,8 @@ spec:
         app: tal
     spec:
       containers:
-      - name: tal-backend
-        image: gcr.io/arabic-historical-dictionary/tal-backend
+      - name: tal-backend-us
+        image: gcr.io/arabic-historical-dictionary/tal-backend-us
         env:
             - name: DATABASE_USER
               valueFrom:
@@ -46,8 +46,8 @@ spec:
           - name: cloudsql
             mountPath: /cloudsql
 
-      - image: gcr.io/arabic-historical-dictionary/tal-frontend
-        name: tal-frontend
+      - image: gcr.io/arabic-historical-dictionary/tal-frontend-us
+        name: tal-frontend-us
         ports:
         - containerPort: 80
         
@@ -63,7 +63,7 @@ spec:
         - name: tal-disk
           gcePersistentDisk:
             # This disk must already exist.
-            pdName: tal-disk-europe
+            pdName: tal-disk-us
             readOnly: true
             fsType: ext4
 
@@ -79,7 +79,7 @@ metadata:
   labels:
     app: tal
 spec:
-  loadBalancerIP: "35.195.8.50"
+  loadBalancerIP: "35.193.115.254"
   type: LoadBalancer
   ports:
   - name: tal-frontend-port

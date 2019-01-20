@@ -2,19 +2,26 @@
   <v-container>
     <v-layout row wrap>
       <v-flex xs12>
-        <v-text-field required v-model="name" label="Corpus Name" box clearable prepend-icon="create"></v-text-field>
+        <v-text-field
+          required
+          v-model="name"
+          label="Corpus Name"
+          solo
+          clearable
+          prepend-icon="create"
+        ></v-text-field>
       </v-flex>
       <v-flex xs12>
         <v-textarea
           label="Corpus Description"
-          box
+          solo
           clearable
           auto-grow
           rows="1"
           prepend-icon="fa fa-info"
           v-model="description"
-          hint="A small description about the corpus that help users correctly use your corpus">
-        </v-textarea>
+          hint="A small description about the corpus that help users correctly use your corpus"
+        ></v-textarea>
       </v-flex>
       <v-flex xs12>
         <el-upload
@@ -32,11 +39,10 @@
           :on-error="onError"
           :on-success="onSuccess"
           :data="data"
-          multiple>
+          multiple
+        >
           <v-spacer></v-spacer>
-          <v-btn>
-            Select Files
-          </v-btn>
+          <v-btn>Select Files</v-btn>
         </el-upload>
       </v-flex>
       <v-flex xs10 offset-xs1>
@@ -47,48 +53,45 @@
 </template>
 
 <script>
-import Upload from 'element-ui'
+import Upload from "element-ui";
 
 export default {
   componenets: { Upload },
-  data: function () {
+  data: function() {
     return {
-      name: '',
-      defaultDescription: 'The Corpus contains texts about YOUR_TEXT_HERE collected from YOUR_TEXT_HERE.',
-      description: '',
+      name: "",
+      defaultDescription:
+        "The Corpus contains texts about YOUR_TEXT_HERE collected from YOUR_TEXT_HERE.",
+      description: "",
       data: {},
       selectedFiles: [],
-      apiUrl: 'http://localhost:8000/polls/upload_file',
+      apiUrl: "http://localhost:8000/polls/upload_file",
       headers: {
-        'Content-Disposition': 'form-data; name="example"; filename="exceptionsup";'
+        "Content-Disposition":
+          'form-data; name="example"; filename="exceptionsup";'
       }
-    }
+    };
   },
   computed: {
-    valide () {
-      return Boolean(this.name) && this.selectedFiles.length > 0
+    valide() {
+      return Boolean(this.name) && this.selectedFiles.length > 0;
     }
   },
   methods: {
-    submitUpload () {
-      this.$refs.upload.submit()
+    submitUpload() {
+      this.$refs.upload.submit();
     },
-    onChange (file, filelist) {
-      this.selectedFiles = filelist
+    onChange(file, filelist) {
+      this.selectedFiles = filelist;
     },
-    addCorpusNameData (file) {
-      this.data['CORPUS_NAME'] = this.name
+    addCorpusNameData(file) {
+      this.data["CORPUS_NAME"] = this.name;
       if (this.description !== this.defaultDescription) {
-        this.data['CORPUS_DESCRIPTION'] = this.description
+        this.data["CORPUS_DESCRIPTION"] = this.description;
       }
     },
-    onSuccess (response, file, filelist) {
-    },
-    onError (err, file, filelist) {
-    }
+    onSuccess(response, file, filelist) {},
+    onError(err, file, filelist) {}
   }
-}
+};
 </script>
-
-<style scoped>
-</style>

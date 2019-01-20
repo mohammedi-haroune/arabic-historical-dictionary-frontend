@@ -3,7 +3,7 @@ import Router from 'vue-router'
 
 Vue.use(Router)
 
-function route (name) {
+function route(name) {
   return {
     path: '/' + name,
     name: name,
@@ -25,7 +25,11 @@ export default new Router({
     route('browser'),
     route('dictionary'),
     route('dictionary2'),
+    route('graphs'),
+    // route('documentStatistics'),
+    route('dashboard'),
     { path: '/document/:id', component: resolve => import('./views/Document.vue').then(resolve) },
+    { path: '/check/:meaning_id', component: resolve => import('./views/Check.vue').then(resolve) },
     // Global redirect for 404
     { path: '*', redirect: '/welcome' }
   ]
